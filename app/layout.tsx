@@ -14,7 +14,7 @@ export const metadata: Metadata = {
     default: 'Jacques Verré',
     template: '%s | Jacques Verré',
   },
-  description: 'This is my portfolio.',
+  description: 'Thoughts about the LLM space.',
   icons: {
     icon: [
       { url: '/icon.png', sizes: '32x32', type: 'image/png' },
@@ -26,10 +26,10 @@ export const metadata: Metadata = {
     ],
   },
   openGraph: {
-    title: 'My Portfolio',
-    description: 'This is my portfolio.',
+    title: 'Jacques Verré',
+    description: 'Thoughts about the LLM space.',
     url: baseUrl,
-    siteName: 'My Portfolio',
+    siteName: 'Jacques Verré',
     locale: 'en_US',
     type: 'website',
   },
