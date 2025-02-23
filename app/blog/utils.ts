@@ -3,7 +3,7 @@ import path from 'path'
 
 type Metadata = {
   title: string
-  publishedAt: string
+  date: string
   summary: string
   image?: string
 }

@@ -43,7 +43,10 @@ export default async function HomePage() {
 
         <div className="flex flex-col gap-20">
           <section>
-            <BlogList />
+            <div className="max-w-2xl">
+              <h2 className="text-xs font-medium text-muted-foreground mb-6 uppercase tracking-wider">Latest posts</h2>
+              <BlogList />
+            </div>
           </section>
           
           <section>

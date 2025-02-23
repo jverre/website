@@ -6,8 +6,7 @@ export default function BlogList({ showAll = false }: { showAll?: boolean }) {
   const displayPosts = showAll ? posts : posts.slice(0, 5)
 
   return (
-    <div className="max-w-2xl">
-      <h2 className="text-xs font-medium text-muted-foreground mb-6 uppercase tracking-wider">Latest posts</h2>
+      <>
       <div className="space-y-3">
         {displayPosts.map((post) => (
           <article 
@@ -48,6 +47,6 @@ export default function BlogList({ showAll = false }: { showAll?: boolean }) {
           </Link>
         </div>
       )}
-    </div>
+    </>
   )
 } 

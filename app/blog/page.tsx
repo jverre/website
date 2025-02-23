@@ -1,6 +1,7 @@
 import { Metadata } from 'next'
 import { getBlogPosts } from './utils'
 import Link from 'next/link'
+import BlogList from 'app/components/blog/BlogList'
 
 export const metadata: Metadata = {
   title: 'Blog - Jacques Verré',
@@ -19,37 +20,11 @@ export default function BlogPage() {
             Writing about product management, artificial intelligence, and software development.
           </p>
         </section>
-
-        <div className="space-y-12">
-          {posts.map((post) => (
-            <article 
-              key={post.slug}
-              className="group"
-            >
-              <Link href={`/blog/${post.slug}`} className="block">
-                <div className="space-y-3">
-                  <div className="flex items-center gap-2">
-                    <h2 className="text-lg font-medium group-hover:text-primary transition-colors">
-                      {post.metadata.title}
-                    </h2>
-                    <time 
-                      dateTime={post.metadata.date}
-                      className="text-sm text-muted-foreground"
-                    >
-                      {new Date(post.metadata.date).toLocaleDateString('en-US', {
-                        year: 'numeric',
-                        month: 'long',
-                      })}
-                    </time>
-                  </div>
-                  <p className="text-base text-muted-foreground/90 leading-relaxed">
-                    {post.metadata.summary}
-                  </p>
-                </div>
-              </Link>
-            </article>
-          ))}
+        <div className="max-w-2xl">
+          <h2 className="text-xs font-medium text-muted-foreground mb-6 uppercase tracking-wider">All posts</h2>
+          <BlogList showAll={true} />
         </div>
+        
       </main>
     </>
   )
