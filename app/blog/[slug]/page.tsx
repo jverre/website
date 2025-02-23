@@ -1,3 +1,5 @@
+import { mdxComponents } from 'app/components/mdx'
+
 export default async function Page({
   params,
 }: {
@@ -8,7 +10,7 @@ export default async function Page({
 
   return (
     <article className="prose dark:prose-invert">
-      <Content />
+      <Content components={mdxComponents} />
     </article>
   )
 }

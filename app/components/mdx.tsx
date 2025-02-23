@@ -1,6 +1,5 @@
 import Link from 'next/link'
 import Image from 'next/image'
-import { MDXRemote } from 'next-mdx-remote/rsc'
 import { highlight } from 'sugar-high'
 import React from 'react'
 
@@ -86,7 +85,7 @@ function createHeading(level) {
   return Heading
 }
 
-let components = {
+export const mdxComponents = {
   h1: createHeading(1),
   h2: createHeading(2),
   h3: createHeading(3),
@@ -97,13 +96,4 @@ let components = {
   a: CustomLink,
   code: Code,
   Table,
-}
-
-export function CustomMDX(props) {
-  return (
-    <MDXRemote
-      {...props}
-      components={{ ...components, ...(props.components || {}) }}
-    />
-  )
 }
