@@ -1,42 +1,20 @@
-# Portfolio Blog Starter
+# Jacques' Blog
 
-This is a porfolio site template complete with a blog. Includes:
+> [!Note]
+> This website is deployed at [jacquesverre.com](https://jacquesverre.com).
 
-- MDX and Markdown support
-- Optimized for SEO (sitemap, robots, JSON-LD schema)
-- RSS Feed
-- Dynamic OG images
-- Syntax highlighting
-- Tailwind v4
-- Vercel Speed Insights / Web Analytics
-- Geist font
+This is my personal blog, I use it to write about my explorations in the LLM space.
 
-## Demo
+This website is built with Next.js, Cursor and deployed on Vercel.
 
-https://portfolio-blog-starter.vercel.app
+## Development
 
-## How to Use
-
-You can choose from one of the following two methods to use this repository:
-
-### One-Click Deploy
-
-Deploy the example using [Vercel](https://vercel.com?utm_source=github&utm_medium=readme&utm_campaign=vercel-examples):
-
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/vercel/examples/tree/main/solutions/blog&project-name=blog&repository-name=blog)
-
-### Clone and Deploy
-
-Execute [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app) with [pnpm](https://pnpm.io/installation) to bootstrap the example:
+You can run the development server with:
 
 ```bash
-pnpm create next-app --example https://github.com/vercel/examples/tree/main/solutions/blog blog
+yarn run dev
 ```
 
-Then, run Next.js in development mode:
+## Deployment
 
-```bash
-pnpm dev
-```
-
-Deploy it to the cloud with [Vercel](https://vercel.com/templates) ([Documentation](https://nextjs.org/docs/app/building-your-application/deploying)).
+To deploy the website, simply push to the `main` branch and Vercel will automatically deploy the changes.
