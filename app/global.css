@@ -148,3 +148,11 @@ table {
 .title {
   text-wrap: balance;
 }
+
+.writing-vertical {
+  writing-mode: vertical-lr;
+  text-orientation: mixed;
+  transform: rotate(180deg);
+  letter-spacing: 0.05em;
+  font-weight: 500;
+}

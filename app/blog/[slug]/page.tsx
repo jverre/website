@@ -1,4 +1,4 @@
-import { mdxComponents } from 'app/components/mdx'
+import { mdxComponents } from 'app/components/ui/mdx'
 
 export default async function Page({
   params,
