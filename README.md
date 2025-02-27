@@ -15,6 +15,19 @@ You can run the development server with:
 yarn run dev
 ```
 
-## Deployment
+### Environment Variables
+
+To use the ASCII Art Generator feature, you need to set up your Anthropic API key:
+
+1. Create a `.env.local` file in the root directory
+2. Add your Anthropic API key:
+   ```
+   ANTHROPIC_API_KEY=your_anthropic_api_key_here
+   ```
+3. Restart the development server if it's already running
+
+## Deployment
 
 To deploy the website, simply push to the `main` branch and Vercel will automatically deploy the changes.
+
+Make sure to add the `ANTHROPIC_API_KEY` environment variable in your Vercel project settings.

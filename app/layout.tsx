@@ -2,11 +2,14 @@ import './global.css'
 import type { Metadata } from 'next'
 import { GeistSans } from 'geist/font/sans'
 import { GeistMono } from 'geist/font/mono'
-import Header from './components/header'
+import Header from './components/layout/header'
 import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/next'
-import Footer from './components/footer'
+import Footer from './components/layout/footer'
 import { baseUrl } from './sitemap'
+import Sidebar from './components/layout/Sidebar'
+import { SidebarProvider } from './providers/SidebarContext'
+import MainContent from './components/layout/MainContent'
 
 export const metadata: Metadata = {
   metadataBase: new URL(baseUrl),
@@ -62,14 +65,19 @@ export default function RootLayout({
         GeistMono.variable
       )}
     >
-      <body className="antialiased max-w-xl mx-4 lg:mx-auto">
-        <main className="flex-auto min-w-0 flex flex-col px-2 md:px-0">
-          <Header />
-          {children}
-          <Footer />
-          <Analytics />
-          <SpeedInsights />
-        </main>
+      <body className="antialiased">
+        <SidebarProvider>
+          <div className="relative min-h-screen">
+            <MainContent>
+              <Header />
+              {children}
+              <Footer />
+            </MainContent>
+            <Sidebar />
+          </div>
+        </SidebarProvider>
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   )
