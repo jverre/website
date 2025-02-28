@@ -5,7 +5,7 @@ import { Github, Linkedin } from 'lucide-react'
 import Link from 'next/link'
 
 export const metadata: Metadata = {
-  title: 'Jacques Verré - Product Manager & AI Enthusiast',
+  title: 'Jacques Verré - Product Leader - Build & Learn',
   description: 'Personal blog and thoughts on AI, LLMs, and product management',
 }
 

@@ -22,12 +22,21 @@ export const metadata: Metadata = {
     icon: [
       { url: '/icon.png', sizes: '32x32', type: 'image/png' },
       { url: '/icon.png', sizes: '192x192', type: 'image/png' },
+      { url: '/icon.png', sizes: '512x512', type: 'image/png' },
     ],
     shortcut: '/icon.png',
     apple: [
       { url: '/icon.png', sizes: '180x180', type: 'image/png' },
     ],
+    other: [
+      {
+        rel: 'mask-icon',
+        url: '/icon.png',
+        color: '#000000',
+      },
+    ],
   },
+  manifest: '/manifest.json',
   openGraph: {
     title: 'Jacques Verré',
     description: 'Thoughts about the LLM space.',

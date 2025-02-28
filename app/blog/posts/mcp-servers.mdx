@@ -68,7 +68,7 @@ Instead, the specifications rely on [Server-Sent Events](https://developer.mozil
 core concept is that a first API call is made to establish a connection and subsequently the client will make a POST request and
 the response will return using the SSE connection. Let's take a look at this quick diagram to better understand this process:
 
-![MCP Server Diagram](/blog/img/mcp-servers-protocol.png)
+![MCP Server Diagram](/img/blog/mcp-servers-protocol.png)
 
 I haven't yet fully understood why this implementation approach is necessary, seems like a convoluted way to implement
 **tool calling**. Sure it might be useful in more complex use-cases but most MCP servers are just simple tool calls !
