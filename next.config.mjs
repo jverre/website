@@ -8,21 +8,6 @@ const nextConfig = {
   // Allow .mdx extensions for files
   pageExtensions: ['js', 'jsx', 'md', 'mdx', 'ts', 'tsx'],
   // Optionally, add any other Next.js config below
-  async redirects() {
-    return [
-      {
-        source: '/(.*)',
-        destination: 'https://www.jacquesverre.com/$1',
-        permanent: true,
-        has: [
-          {
-            type: 'host',
-            value: '(?!www\\.jacquesverre\\.com).*'
-          }
-        ]
-      }
-    ]
-  }
 }
 
 const withMDX = createMDX({
