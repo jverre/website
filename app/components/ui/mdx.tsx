@@ -63,26 +63,19 @@ function slugify(str) {
     .replace(/\-\-+/g, '-') // Replace multiple - with single -
 }
 
-function createHeading(level) {
-  const Heading = ({ children }) => {
-    let slug = slugify(children)
-    return React.createElement(
-      `h${level}`,
-      { id: slug },
-      [
-        React.createElement('a', {
-          href: `#${slug}`,
-          key: `link-${slug}`,
-          className: 'anchor',
-        }),
-      ],
-      children
+function createHeading(level: number) {
+  return function Heading({ children }: { children: React.ReactNode }) {
+    const text = typeof children === 'string' ? children : ''
+    const id = slugify(text)
+    
+    const Tag = `h${level}` as keyof JSX.IntrinsicElements
+    
+    return (
+      <Tag id={id}>
+        {children}
+      </Tag>
     )
   }
-
-  Heading.displayName = `Heading${level}`
-
-  return Heading
 }
 
 export const mdxComponents = {
