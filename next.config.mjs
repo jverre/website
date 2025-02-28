@@ -8,11 +8,6 @@ const nextConfig = {
   // Allow .mdx extensions for files
   pageExtensions: ['js', 'jsx', 'md', 'mdx', 'ts', 'tsx'],
   // Optionally, add any other Next.js config below
-  experimental: {
-    speedInsights: {
-      enabled: true,
-    },
-  },
 }
 
 const withMDX = createMDX({

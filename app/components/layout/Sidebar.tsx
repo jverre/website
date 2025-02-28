@@ -121,7 +121,7 @@ export default function Sidebar() {
             </form>
             
             <div className="mt-2 text-xs text-gray-500 dark:text-gray-400">
-              <p>Why not try "bouncing ball" ?</p>
+              <p>Why not try "bouncing ball" ? Or "Rocket Takeoff"</p>
             </div>
           </div>
         </div>
