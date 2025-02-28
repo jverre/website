@@ -13,7 +13,13 @@ const nextConfig = {
       {
         source: '/(.*)',
         destination: 'https://www.jacquesverre.com/$1',
-        permanent: true
+        permanent: true,
+        has: [
+          {
+            type: 'host',
+            value: '(?!www\\.jacquesverre\\.com).*'
+          }
+        ]
       }
     ]
   }
