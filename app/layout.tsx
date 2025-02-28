@@ -18,6 +18,9 @@ export const metadata: Metadata = {
     template: '%s | Jacques Verré',
   },
   description: 'Thoughts about the LLM space.',
+  alternates: {
+    canonical: 'https://www.jacquesverre.com',
+  },
   icons: {
     icon: [
       { url: '/icon.png', sizes: '32x32', type: 'image/png' },
