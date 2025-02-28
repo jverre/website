@@ -18,7 +18,7 @@ export default async function HomePage() {
             Jacques Verré
           </h1>
           <p className="text-base text-muted-foreground leading-normal mb-8">
-            Product Manager passionate about AI and LLMs. Writing about the intersection of product management and artificial intelligence.
+            Product leader passionate about AI and LLMs. I learn by building small projects and writing about it.
           </p>
 
           <div className="flex items-center gap-4">

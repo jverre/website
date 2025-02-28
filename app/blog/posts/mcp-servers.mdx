@@ -1,9 +1,125 @@
 ---
-title: 'Writing a MCP Server'
+title: 'MCP Servers are great - Wait are they really?'
 date: '2024-02-22'
-summary: 'MCP servers provide LLMs with a structured way to interact with another application.'
+summary: 'MCP servers provide LLMs with a structured way to interact with another application, but is it any different from function calling ?'
 ---
 
-# Building your own MCP Server
+# MCP Servers are great - Wait are they really?
 
-More to come ...
+The Anthropic team released a new paradigm called MCP (Model Context Protocol) which allows LLMs to
+interact with other applications. It quickly caught on with many companies releasing MCP servers to
+interact with their services ([Slack](https://github.com/modelcontextprotocol/servers/tree/main/src/slack),
+[Jira](https://github.com/rahulthedevil/Jira-Context-MCP), [HuggingFace](https://github.com/evalstate/mcp-hfspace),
+etc).
+
+
+After writing an MCP server from scratch, I'm left wondering:
+
+> Are MCP servers popular just because they are easy to implement ?
+
+## What is an MCP Server ?
+
+While the [MCP specification](https://spec.modelcontextprotocol.io/specification/2024-11-05/) is complex,
+it mostly boils down down to two endpoints:
+
+1. Tool list: Returns a list of tools that are available as well as it's specification
+2. Tool call: Calls a tool with the provided arguments
+
+There are additional features related to prompts and resources but they are not nearly as common.
+
+The reason MCP servers have gotten so much traction is that they standardize the interface between
+application developers and LLM client developers. What is important to note here is that MCP servers
+really rely on LLM clients, they are the ones that do most of the heavy lifting.
+
+### Creating an MCP server
+
+The best way to really understand MCP servers is to build one. Thankfully, Anthropic has created an SDK
+that we can use to create a simple server. Creating the server is as simple as:
+
+```python
+
+from mcp.server.fastmcp import FastMCP
+from mcp import types
+
+mcp = FastMCP("simple-mcp-server")
+
+@mcp.tool()
+def hello_world(input: str) -> types.TextContent:
+    """Say hello to the user"""
+    return types.TextContent(
+        type="text",
+        text=f"Hello {input}!"
+    )
+```
+
+This implementation doesn't really allow us to understand what the MCP specification is all about. For that, we need to
+build the server from scratch.
+
+### Writing MCP server from scratch
+
+In order to really understand the MCP specs, I attempted to recreate the MCP server from scratch using FastAPI but without
+the MCP SDK. This implementation is available [here](https://github.com/jverre/chrome-mcp-server). It was a very interesting
+exercise that I would recommend everyone excited about MCP servers to try.
+
+When you start reading the specification, you quickly realize that the MCP server is not as straightforward as it seems. You would
+expect the server to specify one GET endpoint and one POST endpoint, if only it were that simple!
+
+Instead, the specifications rely on [Server-Sent Events](https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events). The
+core concept is that a first API call is made to establish a connection and subsequently the client will make a POST request and
+the response will return using the SSE connection. Let's take a look at this quick diagram to better understand this process:
+
+![MCP Server Diagram](/blog/img/mcp-servers-protocol.png)
+
+I haven't yet fully understood why this implementation approach is necessary, seems like a convoluted way to implement
+**tool calling**. Sure it might be useful in more complex use-cases but most MCP servers are just simple tool calls !
+
+When creating an MCP server, you need to handle two main flows:
+
+1. Initialization flow: Initial request that starts a new SSE connection
+2. Tool call flow: Subsequent POST requests to the server
+
+#### Initialization flow
+
+The initialization flow requires a few different steps, first a connection is established and then the server and client share the
+functionality they each support. In order to support this, I had to implement a queueing mechanism so that everytime a message is
+received from the client, the response is queued and returned to the client using the SSE connection. This adds a lot of complexity
+to the implementation and to be honest I'm not sure why this approach was taken !
+
+One of the challenges in building this flow is that you need a way to test that the implementationn is correct. For this I
+recommend two things:
+
+1. Using the MCP inspector: https://modelcontextprotocol.io/docs/tools/inspector
+2. Downloading a demo MCP server and connecting it to the inspector
+
+The inspector doesn't surface errors when failing to initialize the server which made it very hard to debug my implementation. The
+easiest way I have found to debug this was to compare the working demo server with my implementation. After some trial and error I
+was able to get my MCP server working. If you would like to learn more about the initialization flow, you can check my bare bones
+implementation [here](https://github.com/jverre/chrome-mcp-server/).
+
+#### Tool call flow
+
+The tool call flow is a lot more straightforward as we've already implemented the communication mechanism between the server and
+the client as part of the initialization flow. The only thing we need to do is to implement the logic for the tool call.
+
+For each tool call, we simply need to parse the incoming message and route it to the correct tool based on the `name` field in the
+message. Once the tool has been called, we need to return the result using the SSE connection.
+
+### Final thoughts
+
+Writing an MCP server from scratch was a very insightful experience, it really dampened my enthusiasm ... The specification seems
+overly complex for the most common use-case: Tool calling.
+
+## What is wrong with MCP servers ?
+
+One of the main benefits of MCP servers is that they provide a standard way to interact with other applications. Anthropic has also
+released great libraries that make it very easy to implement new MCP servers, as a result the cost of building a server is close to
+zero. I think this is why we have seen such a proliferation of MCP servers over the last few months, I honestly don't think it is
+because users are looking to interact with all these other applications.
+
+> MCP servers are popular because they are easy to implement, but who is actually using these ?
+
+My biggest complaint about MCP servers is that they are hard to use, not only do you need to run them locally but you also need to
+configure the authentication method by manually editing environment files. This makes it challenging for less technical users to
+use these servers and makes it a challenge to use on a daily basis.
+
+Perhaps someone should create a OpenMCP service similar to OpenRouter ?

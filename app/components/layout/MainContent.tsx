@@ -12,7 +12,7 @@ export default function MainContent({ children }: { children: ReactNode }) {
         isOpen ? 'pr-96' : ''
       }`}
     >
-      <div className={`max-w-xl mx-auto ${isOpen ? 'transform translate-x-[-48px]' : ''}`}>
+      <div className={`max-w-2xl mx-auto ${isOpen ? 'transform translate-x-[-48px]' : ''}`}>
         <main className="flex-auto min-w-0 flex flex-col px-2 md:px-0">
           {children}
         </main>
