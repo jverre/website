@@ -50,7 +50,12 @@ function getMDXData(dir) {
 }
 
 export function getBlogPosts() {
-  return getMDXData(path.join(process.cwd(), 'app', 'blog', 'posts'))
+  const posts = getMDXData(path.join(process.cwd(), 'app', 'blog', 'posts'));
+  
+  return posts.sort((a, b) => {
+    if (!a.metadata?.date || !b.metadata?.date) return 0;
+    return new Date(b.metadata.date).getTime() - new Date(a.metadata.date).getTime();
+  });
 }
 
 export function formatDate(date: string, includeRelative = false) {

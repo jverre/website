@@ -1,0 +1,224 @@
+---
+title: 'How do you run user code in a safe way ?'
+date: '2025-03-22'
+summary: 'Running user code is a common task in many applications. But how do you do it in a safe way ?'
+---
+
+# How do you run user code safely ?
+
+> I will preface this by saying that I am not a security expert and this is not a guide on running
+user code in a safe way. Instead, this is my learnings following an exploration into running user
+code.
+
+I've been coming across a number of different applications over the last few months that rely on
+running user code:
+
+- [E2B](https://e2b.dev/): API to run user code in the cloud
+- [CodeSandbox](https://codesandbox.io/): Online IDE to run user code
+- [Lovable.dev](https://www.lovable.dev/): Lovable is your superhuman full stack engineer.
+and there are many more !
+
+**One question that I keep asking myself is how do they do it ?**
+
+The answer is actually quite straightforward:
+
+> The majority of tools running user code relies on one technology: [AWS firecracker](https://firecracker-microvm.github.io/).
+
+To really get an understanding on the power of Firecracker, I thought it would be fun to try creating a small
+service that allows you to run use code. This was much simpler than I thought and I would never have been able
+to do it without the help of [Claude](https://www.anthropic.com/claude) !
+
+![running user code](/img/blog/running-user-code.png)
+
+## What is AWS firecracker ?
+
+AWS firecracker is a lightweight framework written in Rust that allows you to run multiple "MicroVMs" in a secure and
+isolated way. It was originally created by AWS to for AWS Lambda and was released as an open-source project in 2018.
+
+The core value proposition of Firecracker is two fold:
+
+1. **Performance**: Firecracker is designed to be performant. New VMs can be started in less than 200ms thanks
+to the use of MicroVMs.
+2. **Security**: Firecracker is designed to be secure, this allows you to run user code without concerns about
+the security of the host machine (assuming everything is configured correctly)
+3. **Scalability**: Firecracker is designed to be scalable. There is less then 5MB of overhead per VM allowing
+you to maximise the number of VMs that can be run on a single machine.
+
+For a more in-depth explanation of how Firecracker works, you can read the [official documentation](https://firecracker-microvm.github.io/).
+
+## Creating a small service to run user code
+
+The service we will be creating is quite simple:
+
+1. `/create-vm` endpoint: Creates a new VM and returns an IP address to connect to.
+2. `/execute` endpoint: Execute a piece of code in the VM and return the output.
+
+I won't be detailling the full implementation here but will highlight the most interesting parts.
+
+### Installing firecracker
+
+Firecracker is designed to run on Linux, I tried for hours to get it running on MacOS but eventually
+realized this was just not possible. This is because Firecracker relies on features only available
+in the Linux kernel like KVM.
+
+After a few attempts at installing a Linux VM inside a MacOS, I gave up and decided to simply
+get a Digital Ocean Droplet and run it on there. They are less than $20/month and saved me
+a lot of headaches !
+
+Once you are connected to your Digital Ocean Droplet, you can start the firecracker service using:
+
+```bash
+curl -Lo /usr/local/bin/firecracker https://github.com/firecracker-microvm/firecracker/releases/download/v1.11.0/firecracker-v1.11.0-x86_64
+sudo chmod +x /usr/local/bin/firecracker
+```
+
+You can then test the firecracker is available by running:
+
+```bash
+firecracker --version
+```
+
+To learn more about setting up Firecracker, I would highly recommend checking out Julia Evans' blog
+post [Firecracker: start a VM in less than a second](https://jvns.ca/blog/2021/01/23/firecracker--start-a-vm-in-less-than-a-second/). It 
+provides a great introduction to Firecracker with many easy to follow examples.
+
+### Running a MicroVMs
+
+To run a MicroVM with Firecracker, all you need is a kernel and a boot drive. Once you have these two files, you can
+create a config file that will be used to start the MicroVM.
+
+I used the quickstart kernal image provided by Firecracker:
+
+```bash
+wget https://s3.amazonaws.com/spec.ccfc.min/img/quickstart_guide/x86_64/kernels/vmlinux.bin
+```
+
+On the other hand, creating the rootfs boot drive is more involved. In one of Julia Evans' blog post, she shares some commands on how to
+create a rootfs boot drive based on a Docker image. Sounds simple enough and so that is the path I also decided to take.
+
+When I followed the [instructions](https://jvns.ca/blog/2021/01/23/firecracker--start-a-vm-in-less-than-a-second/#how-i-built-my-own-firecracker-images)
+in her blog post, I was able to successfully create a MicroVM. However I quickly ran into an issue where my MicroVMs would
+take over a minute and a half to start. Not what I expected from Firecracker ! The solution Julia Evans described also did not work for me.
+
+The message that kept appearing in the logs was:
+
+```bash
+[    **] (1 of 2) A start job is running for Load/Save Random Seed (8s / 10min)
+[    **] (2 of 2) A start job is running for /dev/ttyS0 (16s / 1min 30s)
+```
+
+After some investigation, I found the issue was that since the MicroVMs are meant to be very lightweight, it would take a long
+time for on boot to create the random data needed for the `sshd` service to start. After much back and forth with Claude, I
+was able to fix the issue by update the Dockerfile to be:
+
+```dockerfile
+FROM ubuntu:20.04
+
+# First update and install packages in a single layer
+RUN apt-get update && \
+    apt-get upgrade -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y \
+    systemd \
+    systemd-sysv \
+    rng-tools5 \
+    openssh-server \
+    python3 && \
+    apt-get clean
+
+# Configure systemd
+RUN systemctl set-default multi-user.target && \
+    # Remove unnecessary services
+    rm -f /lib/systemd/system/systemd-update-utmp-runlevel.service && \
+    rm -f /lib/systemd/system/systemd-update-utmp.service && \
+    rm -f /lib/systemd/system/serial-getty@.service && \
+    # Disable services that cause delays
+    systemctl mask systemd-random-seed.service && \
+    systemctl mask systemd-remount-fs.service && \
+    systemctl mask dev-ttyS0.device && \
+    systemctl mask serial-getty@ttyS0.service
+
+# SSH configuration with proper permissions
+RUN mkdir -p /root/.ssh && \
+    chmod 700 /root/.ssh && \
+    echo "PubkeyAuthentication yes" >> /etc/ssh/sshd_config && \
+    echo "PermitRootLogin prohibit-password" >> /etc/ssh/sshd_config && \
+    echo "PasswordAuthentication no" >> /etc/ssh/sshd_config && \
+    echo "UsePAM no" >> /etc/ssh/sshd_config && \
+    echo "UseDNS no" >> /etc/ssh/sshd_config && \
+    echo "StrictModes no" >> /etc/ssh/sshd_config && \
+    # Enable SSH service
+    systemctl enable ssh
+
+# Create required directories for systemd
+RUN mkdir -p /var/run/sshd && \
+    mkdir -p /run/systemd && \
+    mkdir -p /var/log/journal
+
+ENTRYPOINT ["/sbin/init"]
+```
+
+This was enough to fix the issue and the MicroVM now starts in a couple of seconds. Still an order of 
+magnitude slower than I Firecracker advertises but to be honest, I don't even know how to figure out
+the cause of this issue. It'ss more than enough for now.
+
+### Creating the FastAPI service
+
+This is very Claude really came in handy, both Julia Evans and the firectl team have created great
+example scripts on how to create simple APIs to manage firecracker VMs but they are all in Go.
+
+So as a starting point, I simply asked Claude to convert [this gist](https://gist.github.com/jvns/9b274f24cfa1db7abecd0d32483666a3)
+to FastAPI code and we were off to the races.
+
+Once everything was configured, I was able to create this small demo:
+
+1. Create a new VM
+
+```bash
+$ curl -X POST http://localhost:8080/vm/create \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "basic_demo",
+    "user_id": "c59837c4-e757-4f73-b4f0-cd60a0e0dcbc",
+    "root_image_path": "/root/data/openmcp/base_image.ext4",
+    "kernel_path": "/root/data/openmcp/vmlinux.bin"
+  }'
+
+{"ip_address":"172.17.0.11","vm_id":"cf94dbc4-d2c1-4830-860d-10ea946ae5ea"}
+```
+
+2. Execute a command in the VM:
+
+```bash
+$ curl -X POST http://localhost:8080/exec/command \
+  -H "Content-Type: application/json" \
+  -d '{
+    "vm_id": "cf94dbc4-d2c1-4830-860d-10ea946ae5ea",
+    "command": "echo Hello World"
+  }'
+
+{"success":true,"output":"Hello World\n"}
+```
+
+*You might be able to see in the example above the topic of my next blog post.*
+
+## What I learned through this exploration
+
+### Firecracker is very cool
+
+The very first thing that struck me was just how elegant and powerful Firecracker is. It's very low level,
+even with Claude's help I don't really understand what is happening, but has a simplicity too it that
+makes it pretty easy to use assuming you are following a tutorial and not trying to do anything for
+production.
+
+### I couldn't have done it without Claude
+
+I've tried in the past to get Firecracker up and running and was never successful mostly due to `iptable`
+rules that I couldn't get right. This time around, by asking Claude for help, I was able to get everything
+working. It was also very helpful in figuring out the issue with the MicroVMs taking so long to start, Googling
+got me absolutely nowhere.
+
+### Claude, Cursor and Windsurf will only take you so far
+
+While Claude was invaluable in helping me figure out the issues I was having, the service I got up and running
+is absolutely not production ready. I learned a lot during this exploration but one thing is for certain,
+great engineers are not going anywhere anytime soon !
