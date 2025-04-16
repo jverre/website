@@ -1,0 +1,95 @@
+---
+title: 'VS-Code extension to log your AI chats to Opik'
+date: '2025-04-16'
+summary: This was my first proper experiment with "vibe coding" and it was awesome, until it wasn't ..
+---
+
+# What I learned vibe coding a VS-Code extension
+
+As I've been trying out different coding assistants, I've been looking at ways of keeping track of the conversations I have with these assistants.
+I came across [SpecStory](https://github.com/specstoryai/getspecstory) but it only works with Cursor while I needed to save my chats with
+[Zencoder](https://zencoder.ai/).
+
+I took on the challenge of building a VS-code extension that would log all my Zencoder chats to [Opik](https://github.com/comet-ml/opik). By the way
+if you haven't tried out Zencoder yet, I highly recommend it !
+
+> You can try the VS-code today, just search for `Opik - Chat history` in the VScode marketplace.
+
+## Figuring out how to build the integration
+
+The first set in figuring out how to build the extension was to find where Zencoder stores it's chat history. Since you can load the most recent
+chats from the Zencoder sidebar, I assumed these where stored locally somewhere. To find them, I first started a new conversation with a single user
+message with `7eda9d8e` and from the command line I ran:
+
+```bash
+find "/Users/jacques/Library/Application Support/code/" -type f -exec grep -l "7eda9d8e" {} +
+```
+
+This allowed me to find that Zencoder stores the chat conversations in two files:
+
+1. `sessions.json`: Stores metadata about each chat conversation (title, last updated time, etc)
+2. `/sessions/{id}.json`: Stores the list of messages for each chat conversation
+
+Based on this finding, I could now plan the extension. It would be quite straightforward, every
+5 seconds I would poll for changes in the `sessions.json` file and upload the corresponding chats
+to Opik:
+
+![extension schema](/img/blog/vibe-coding-1.png).
+
+With this plan, we can go ahead and create the extension.
+
+## Writing the extension with Zencoder
+
+I'm not a very good Typescript developer, it only makes sense to use Zencoder to create the extension.
+After some basic prompting, I had a plan for the architecture of the extension. It would be a sinmple
+loop that would run every 5 seconds that would:
+
+1. Get a list of the chat sessions that have been updated since the last loop
+2. Fetch the chat messages for each session that has been updated
+3. Convert the chat messages to the Opik trace format
+4. Log the traces to Opik
+
+This was quite straight forward and a first version was quickly implemented. I did run into an issue
+related to some messages being logged more than once but by asking Zencoder:
+
+> Some chat messages are logged more than once, review the code and suggest some reasons for this as well
+as ways to figure out the root cause.
+
+Zencoder was able to identify a missing `continue` statement that once added resolved the issue.
+
+### Vibe coding
+
+"Vibe coding" is a recent term that refers to a development approach that heavily relies on LLMs, typically
+achieved by using the "Agent" mode in Cursor, Windsurf or Zencoder.
+
+While I tried "vibe coding" at the beginning of the project, I quickly reverted back to the chat mode.
+Having an LLM update files for you is convenient but I quickly lost track of the changes being made and new
+issues where popping up right left and center. This is not a Zencoder issue, I had the same issues with
+Cursor and Windsurf.
+
+The chat mode in all the AI coding agents provides the perfect balance between usefulness and control.
+Having a chat that has access to your full codebase for context is incredibly useful and avoids the
+painful copy and pasting into Claude of ChatGPT.
+
+## Using the extension
+
+You can find the [Opik - Chat history extension](https://marketplace.visualstudio.com/items?itemName=jverre.opik-zencoder-chat-history)
+in the VScode marketplace. To install it, simply ssearch for `Opik - Chat History` in the VScode marketplace
+and click install.
+
+Once installed, you will need to configure it by specifying your Opik API key. For this, navigate to the
+VSCode settings page and search for `opikHistory.APIKey`.
+
+Once configured, each Zencoder chat will be logged to the Opik platform:
+
+![Opik chat conversation](/img/blog/vibe-coding-2.png).
+
+## References
+
+If you've enjoyed this article, I recommend checking out:
+
+1. [SpecStory](https://specstory.com/): SpecStory is a much more polished implementation of the ideas in this post
+2. [Zencoder](https://zencoder.ai/): An AI coding Agent you can directly from VScode or Intellij - Why would you
+download a whole new IDE ?
+3. [Opik](https://github.com/comet-ml/opik): An LLM evaluation platform that allows you to both track all your LLM
+calls and evaluate the performance of your LLM applications.
