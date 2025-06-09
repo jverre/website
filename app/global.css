@@ -165,3 +165,52 @@ table {
   letter-spacing: 0.05em;
   font-weight: 500;
 }
+
+/* Enhanced table styles */
+.prose table {
+  @apply w-full my-8 border-collapse;
+  display: table; /* Override the block display */
+  white-space: normal; /* Override nowrap */
+}
+
+.prose thead {
+  @apply bg-neutral-50 dark:bg-neutral-800/50;
+}
+
+.prose th {
+  @apply px-4 py-3 text-left text-sm font-semibold text-neutral-900 dark:text-neutral-100 border-b border-neutral-200 dark:border-neutral-700;
+}
+
+.prose td {
+  @apply px-4 py-3 text-sm text-neutral-700 dark:text-neutral-300 border-b border-neutral-100 dark:border-neutral-800;
+}
+
+.prose tr:last-child td {
+  @apply border-b-0;
+}
+
+.prose tr:hover {
+  @apply bg-neutral-50/50 dark:bg-neutral-800/30;
+}
+
+/* Responsive table container */
+.prose .table-container {
+  @apply w-full overflow-x-auto my-8 rounded-lg border border-neutral-200 dark:border-neutral-800;
+}
+
+/* Margin notes styling */
+.prose .digression-marker {
+  position: relative;
+}
+
+/* Ensure margin notes don't interfere with sidebar */
+@media (min-width: 1100px) {
+  .prose .digression-marker aside {
+    max-width: calc(100vw - 1200px - 6rem);
+  }
+}
+
+/* Smooth positioning for margin notes */
+.prose aside {
+  z-index: 10;
+}

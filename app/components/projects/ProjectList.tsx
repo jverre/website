@@ -24,6 +24,13 @@ const projects: Project[] = [
     tags: ['Python', 'FastAPI', 'MCP', 'Open-Source'],
     updatedAt: '2025-02-22',
   },
+  {
+    title: 'Opik Chat History',
+    description: 'A Cursor extension to log chat history to Opik',
+    repoUrl: 'https://github.com/jverre/opik-chat-history',
+    tags: ['Python', 'LLMs', 'Open-Source', 'Cursor'],
+    updatedAt: '2025-06-08',
+  },
 ]
 
 export default function ProjectList({ showAll = false }: { showAll?: boolean }) {

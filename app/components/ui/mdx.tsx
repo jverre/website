@@ -2,6 +2,8 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { highlight } from 'sugar-high'
 import React from 'react'
+import Digression from '../blog/Digression'
+import Collapsible from './Collapsible'
 
 function Table({ data }) {
   let headers = data.headers.map((header, index) => (
@@ -89,4 +91,6 @@ export const mdxComponents = {
   a: CustomLink,
   code: Code,
   Table,
+  Digression,
+  Collapsible,
 }
