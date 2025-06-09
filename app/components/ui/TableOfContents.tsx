@@ -51,13 +51,13 @@ export function TableOfContents({ contentRef }: TableOfContentsProps) {
   if (headings.length === 0 || isSidebarOpen) return null
 
   return (
-    <div className="hidden xl:block">
-      <div className="fixed top-[10rem] right-[max(5rem,calc(50%-45rem))] w-64">
-        <nav className="relative pl-8">
-          <h4 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4">
+    <div className="hidden xl:block relative">
+      <div className="absolute left-full ml-8 w-80 top-0 z-10">
+        <nav className="relative">
+          <h4 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4 !mt-0">
             Table of Contents
           </h4>
-          <ul className="space-y-2.5 max-h-[calc(100vh-16rem)] overflow-y-auto">
+          <ul className="space-y-2.5 max-h-[calc(100vh-16rem)] overflow-y-hidden">
             {headings.map((heading) => (
               <li key={heading.id}>
                 <a

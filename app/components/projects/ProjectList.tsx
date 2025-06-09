@@ -25,12 +25,12 @@ const projects: Project[] = [
     updatedAt: '2025-02-22',
   },
   {
-    title: 'Opik - Chat history',
-    description: 'VSCode extension that logs all your Zencoder chats to the Opik platform',
+    title: 'Opik Chat History',
+    description: 'A Cursor extension to log chat history to Opik',
     repoUrl: 'https://github.com/jverre/opik-chat-history',
-    tags: ['VSCode Extension', 'Zencoder', 'Open-Source', 'vibe-coding'],
-    updatedAt: '2025-04-17',
-  }
+    tags: ['Python', 'LLMs', 'Open-Source', 'Cursor'],
+    updatedAt: '2025-06-08',
+  },
 ]
 
 export default function ProjectList({ showAll = false }: { showAll?: boolean }) {

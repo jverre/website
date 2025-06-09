@@ -1,4 +1,5 @@
 import { mdxComponents } from 'app/components/ui/mdx'
+import BlogPageClient from './BlogPageClient'
 
 export default async function Page({
   params,
@@ -9,9 +10,9 @@ export default async function Page({
   const { default: Content, metadata } = await import(`app/blog/posts/${slug}.mdx`)
 
   return (
-    <article className="prose dark:prose-invert">
+    <BlogPageClient>
       <Content components={mdxComponents} />
-    </article>
+    </BlogPageClient>
   )
 }
 
