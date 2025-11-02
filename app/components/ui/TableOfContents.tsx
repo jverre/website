@@ -51,8 +51,8 @@ export function TableOfContents({ contentRef }: TableOfContentsProps) {
   if (headings.length === 0 || isSidebarOpen) return null
 
   return (
-    <div className="hidden xl:block relative">
-      <div className="sticky top-24 left-full ml-8 w-80 z-10">
+    <div className="hidden xl:block absolute left-full ml-8 w-80 top-0">
+      <div className="sticky top-24">
         <nav className="relative">
           <h4 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4 !mt-0">
             Table of Contents
