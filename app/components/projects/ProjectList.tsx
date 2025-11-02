@@ -59,12 +59,13 @@ export default function ProjectList({ showAll = false }: { showAll?: boolean }) 
                 <h3 className="text-base font-medium group-hover:text-primary transition-colors">
                   {project.title}
                 </h3>
-                <Link 
-                  href={project.repoUrl} 
-                  className="text-muted-foreground/60 hover:text-primary"
+                <Link
+                  href={project.repoUrl}
+                  className="flex items-center gap-1.5 text-xs text-muted-foreground/60 hover:text-primary transition-colors"
                   target="_blank"
                 >
                   <Github className="h-4 w-4" />
+                  <span>{project.repoUrl.replace('https://', '')}</span>
                 </Link>
               </div>
               <p className="text-sm text-muted-foreground/80 leading-relaxed">
