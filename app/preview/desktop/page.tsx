@@ -11,19 +11,17 @@ export default function DesktopPreview() {
           ← back
         </a>
       </div>
-      <div className="flex-1 overflow-auto p-4">
-        <div className="border border-neutral-300 dark:border-neutral-700 shadow-lg">
-          <div style={{
-            width: '1440px',
-            height: '900px',
-            transform: 'scale(0.26)',
-            transformOrigin: 'top left',
-          }}>
-            <iframe
-              src="/"
-              className="w-full h-full border-0"
-            />
-          </div>
+      <div className="flex-1 overflow-auto">
+        <div style={{
+          width: '1440px',
+          height: '900px',
+          transform: 'scale(0.26)',
+          transformOrigin: 'top left',
+        }}>
+          <iframe
+            src="/"
+            className="w-full h-full border border-neutral-300 dark:border-neutral-700"
+          />
         </div>
       </div>
     </div>
