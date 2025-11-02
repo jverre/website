@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 export default async function HomePage() {
   return (
     <>
-      <main className="min-h-screen max-w-2xl mx-auto px-2 md:px-6 py-12 md:py-20">
+      <div className="min-h-screen max-w-2xl mx-auto py-12 md:py-20">
         <section className="mb-20">
           <h1 className="text-2xl font-medium mb-4">
             Jacques Verré
@@ -51,7 +51,7 @@ export default async function HomePage() {
             <ProjectList />
           </section>
         </div>
-      </main>
+      </div>
     </>
   )
 }
