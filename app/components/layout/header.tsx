@@ -8,7 +8,6 @@ export default function Header() {
 
   return (
     <header className="w-full border-b border-neutral-200/80 dark:border-neutral-800/80">
-      <div className="max-w-3xl mx-auto px-6">
         <nav className="flex h-20 items-center justify-between">
           <Link 
             href="/" 
@@ -49,7 +48,6 @@ export default function Header() {
             </Link>
           </div>
         </nav>
-      </div>
     </header>
   )
 } 

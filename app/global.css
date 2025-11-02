@@ -1,5 +1,15 @@
 @import 'tailwindcss';
 
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
 ::selection {
   background-color: #47a3f3;
   color: #fefefe;
@@ -29,8 +39,18 @@
   }
 }
 
-html {
-  min-width: 360px;
+.prose {
+  width: 100%;
+  max-width: 100%;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  word-break: break-word;
+}
+
+.prose > * {
+  max-width: 100%;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
 }
 
 .prose .anchor {
@@ -38,8 +58,6 @@ html {
 
   margin-left: -1em;
   padding-right: 0.5em;
-  width: 80%;
-  max-width: 700px;
   cursor: pointer;
 }
 
@@ -71,10 +89,13 @@ html {
 
 .prose pre {
   @apply bg-neutral-50 dark:bg-neutral-900 rounded-lg overflow-x-auto border border-neutral-200 dark:border-neutral-900 py-2 px-3 text-sm;
+  max-width: 100%;
 }
 
 .prose code {
   @apply px-1 py-0.5 rounded-lg;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
 }
 
 .prose pre code {
@@ -90,6 +111,8 @@ html {
 .prose img {
   /* Don't apply styles to next/image */
   @apply m-0;
+  max-width: 100%;
+  height: auto;
 }
 
 .prose p {
@@ -149,7 +172,7 @@ input[type='email'] {
 
 table {
   display: block;
-  max-width: fit-content;
+  max-width: 100%;
   overflow-x: auto;
   white-space: nowrap;
 }

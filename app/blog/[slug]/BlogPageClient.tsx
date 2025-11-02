@@ -7,16 +7,14 @@ export default function BlogPageClient({ children }: { children: React.ReactNode
   const contentRef = useRef<HTMLDivElement>(null)
 
   return (
-    <div className="w-full max-w-none">
+    <div className="relative py-10">
       <TableOfContents contentRef={contentRef} />
-      <div className="max-w-2xl mx-auto xl:mx-0">
-        <article 
-          ref={contentRef}
-          className="prose dark:prose-invert max-w-none"
-        >
-          {children}
-        </article>
-      </div>
+      <article
+        ref={contentRef}
+        className="prose dark:prose-invert"
+      >
+        {children}
+      </article>
     </div>
   )
 } 
