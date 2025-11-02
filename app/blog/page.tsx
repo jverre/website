@@ -13,18 +13,15 @@ export default function BlogPage() {
 
   return (
     <>
-      <main className="min-h-screen max-w-3xl mx-auto px-4 py-12 md:py-20">
+      <main className="min-h-screen max-w-3xl mx-auto px-2 md:px-6 py-12 md:py-20">
         <section className="mb-16">
           <h1 className="text-2xl font-medium mb-4">Blog</h1>
           <p className="text-base text-muted-foreground">
             Writing about product management, artificial intelligence, and software development.
           </p>
         </section>
-        <div className="max-w-3xl">
-          <h2 className="text-xs font-medium text-muted-foreground mb-6 uppercase tracking-wider">All posts</h2>
-          <BlogList showAll={true} />
-        </div>
-        
+        <h2 className="text-xs font-medium text-muted-foreground mb-6 uppercase tracking-wider">All posts</h2>
+        <BlogList showAll={true} />
       </main>
     </>
   )

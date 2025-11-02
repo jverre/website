@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 export default async function HomePage() {
   return (
     <>
-      <main className="min-h-screen max-w-2xl mx-auto px-4 py-12 md:py-20">
+      <main className="min-h-screen max-w-2xl mx-auto px-2 md:px-6 py-12 md:py-20">
         <section className="mb-20">
           <h1 className="text-2xl font-medium mb-4">
             Jacques Verré
@@ -22,16 +22,16 @@ export default async function HomePage() {
           </p>
 
           <div className="flex items-center gap-4">
-            <Link 
-              href="https://github.com/jverre" 
+            <Link
+              href="https://github.com/jverre"
               className="inline-flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors"
               target="_blank"
             >
               <Github className="h-4 w-4" />
               <span className="text-sm">GitHub</span>
             </Link>
-            <Link 
-              href="https://linkedin.com/in/jacques-verré-27a4965b" 
+            <Link
+              href="https://linkedin.com/in/jacques-verré-27a4965b"
               className="inline-flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors"
               target="_blank"
             >
@@ -43,12 +43,10 @@ export default async function HomePage() {
 
         <div className="flex flex-col gap-20">
           <section>
-            <div className="max-w-2xl">
-              <h2 className="text-xs font-medium text-muted-foreground mb-6 uppercase tracking-wider">Latest posts</h2>
-              <BlogList />
-            </div>
+            <h2 className="text-xs font-medium text-muted-foreground mb-6 uppercase tracking-wider">Latest posts</h2>
+            <BlogList />
           </section>
-          
+
           <section>
             <ProjectList />
           </section>

@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 export default function ProjectsPage() {
   return (
     <>
-      <main className="min-h-screen max-w-2xl mx-auto px-4 py-12 md:py-20">
+      <main className="min-h-screen max-w-2xl mx-auto px-2 md:px-6 py-12 md:py-20">
         <section className="mb-16">
           <h1 className="text-2xl font-medium mb-4">Projects</h1>
           <p className="text-base text-muted-foreground">
