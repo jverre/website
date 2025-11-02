@@ -3,12 +3,12 @@
 export default function DesktopPreview() {
   return (
     <div className="fixed inset-0 bg-neutral-100 dark:bg-neutral-900 flex flex-col">
-      <div className="h-12 flex items-center px-4 border-b border-neutral-200 dark:border-neutral-800 bg-white dark:bg-black">
+      <div className="h-10 flex items-center px-3 border-b border-neutral-200 dark:border-neutral-800 bg-white dark:bg-black">
         <a
           href="/"
-          className="text-sm text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-200 transition-colors"
+          className="text-xs text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-200 transition-colors"
         >
-          ← back to site
+          ← back
         </a>
       </div>
       <div className="flex-1 overflow-auto p-4">
