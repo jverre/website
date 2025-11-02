@@ -1,15 +1,24 @@
 import Link from 'next/link'
-import { Github } from 'lucide-react'
+import { Github, ExternalLink } from 'lucide-react'
 
 interface Project {
   title: string
   description: string
   repoUrl: string
+  websiteUrl?: string
   tags: string[]
   updatedAt: string
 }
 
 const projects: Project[] = [
+  {
+    title: 'Oscar',
+    description: 'Share all your LLM chats - Works with Cursor, Claude code, ChatGPT and more.',
+    repoUrl: 'https://github.com/jverre/oscar',
+    websiteUrl: 'https://getoscar.ai',
+    tags: ['TypeScript', 'LLMs', 'Open-Source'],
+    updatedAt: '2025-10-24',
+  },
   {
     title: 'Opik',
     description: 'An LLM development platform for debugging, testing and monitoring LLM applications.',
@@ -52,13 +61,25 @@ export default function ProjectList({ showAll = false }: { showAll?: boolean }) 
                 <h3 className="text-base font-medium group-hover:text-primary transition-colors">
                   {project.title}
                 </h3>
-                <Link 
-                  href={project.repoUrl} 
-                  className="text-muted-foreground/60 hover:text-primary"
-                  target="_blank"
-                >
-                  <Github className="h-4 w-4" />
-                </Link>
+                <div className="flex items-center gap-3">
+                  {project.websiteUrl && (
+                    <Link
+                      href={project.websiteUrl}
+                      className="flex items-center gap-1.5 text-xs text-muted-foreground/60 hover:text-primary transition-colors"
+                      target="_blank"
+                    >
+                      <ExternalLink className="h-4 w-4" />
+                      <span>{project.websiteUrl.replace('https://', '')}</span>
+                    </Link>
+                  )}
+                  <Link
+                    href={project.repoUrl}
+                    className="text-muted-foreground/60 hover:text-primary transition-colors"
+                    target="_blank"
+                  >
+                    <Github className="h-4 w-4" />
+                  </Link>
+                </div>
               </div>
               <p className="text-sm text-muted-foreground/80 leading-relaxed">
                 {project.description}
