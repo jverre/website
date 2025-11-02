@@ -11,6 +11,13 @@ interface Project {
 
 const projects: Project[] = [
   {
+    title: 'Oscar',
+    description: 'Share all your LLM chats - Works with Cursor, Claude code, ChatGPT and more.',
+    repoUrl: 'https://github.com/jverre/oscar',
+    tags: ['TypeScript', 'LLMs', 'Open-Source'],
+    updatedAt: '2025-10-24',
+  },
+  {
     title: 'Opik',
     description: 'An LLM development platform for debugging, testing and monitoring LLM applications.',
     repoUrl: 'https://github.com/comet-ml/opik',
