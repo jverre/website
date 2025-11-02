@@ -1,23 +1,17 @@
 'use client'
 
-import { useState } from 'react'
-
 export default function DesktopPreview() {
-  const [url, setUrl] = useState('/')
-
   return (
-    <div className="fixed inset-0 bg-gray-100">
-      <div className="h-12 bg-black text-white flex items-center justify-between px-4">
-        <input
-          type="text"
-          value={url}
-          onChange={(e) => setUrl(e.target.value)}
-          className="flex-1 bg-gray-800 text-white px-3 py-1 rounded text-sm"
-          placeholder="/path"
-        />
-        <a href="/" className="ml-3 text-sm">✕</a>
+    <div className="fixed inset-0 bg-white dark:bg-black">
+      <div className="absolute top-4 left-4 z-20">
+        <a
+          href="/"
+          className="text-sm text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-200 transition-colors"
+        >
+          ← back to site
+        </a>
       </div>
-      <div className="h-[calc(100vh-3rem)] overflow-auto">
+      <div className="h-screen overflow-auto">
         <div style={{
           width: '1440px',
           height: '900px',
@@ -25,7 +19,7 @@ export default function DesktopPreview() {
           transformOrigin: 'top left',
         }}>
           <iframe
-            src={url}
+            src="/"
             className="w-full h-full border-0"
           />
         </div>
