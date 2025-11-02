@@ -2,14 +2,16 @@
 
 export default function DesktopPreview() {
   return (
-    <div className="fixed inset-0 bg-white dark:bg-black">
-      <a
-        href="/"
-        className="absolute top-4 left-4 z-20 text-xs text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-200 transition-colors"
-      >
-        ← back
-      </a>
-      <div className="h-screen overflow-auto">
+    <div className="fixed inset-0 bg-white dark:bg-black flex flex-col">
+      <div className="p-4">
+        <a
+          href="/"
+          className="text-xs text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-200 transition-colors"
+        >
+          ← back
+        </a>
+      </div>
+      <div className="flex-1 overflow-auto">
         <div style={{
           width: '1440px',
           height: '900px',
