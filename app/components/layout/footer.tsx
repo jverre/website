@@ -18,8 +18,7 @@ function ArrowIcon() {
 
 export default function Footer() {
   return (
-    <footer className="w-full border-t border-neutral-200/80 dark:border-neutral-800/80 mt-20">
-      <div className="max-w-3xl mx-auto py-12">
+    <footer className="w-full border-t border-neutral-200/80 dark:border-neutral-800/80 mt-20 py-12">
         <div className="flex flex-col sm:flex-row justify-between items-center gap-8 sm:gap-4 text-sm">
           <p className="text-neutral-600 dark:text-neutral-400 order-2 sm:order-1">
             © {new Date().getFullYear()} MIT Licensed
@@ -54,7 +53,6 @@ export default function Footer() {
             </a>
           </div>
         </div>
-      </div>
     </footer>
   )
 }

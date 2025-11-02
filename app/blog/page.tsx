@@ -13,7 +13,7 @@ export default function BlogPage() {
 
   return (
     <>
-      <div className="min-h-screen max-w-3xl mx-auto py-12 md:py-20">
+      <div className="min-h-screen py-12 md:py-20">
         <section className="mb-16">
           <h1 className="text-2xl font-medium mb-4">Blog</h1>
           <p className="text-base text-muted-foreground">

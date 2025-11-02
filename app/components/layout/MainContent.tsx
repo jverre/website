@@ -13,8 +13,10 @@ export default function MainContent({ children }: { children: ReactNode }) {
       }`}
     >
       <div className={isOpen ? 'transform translate-x-[-48px]' : ''}>
-        <main className="flex-auto min-w-0 flex flex-col px-2 md:px-6">
-          {children}
+        <main className="flex-auto min-w-0 flex flex-col">
+          <div className="w-full max-w-3xl mx-auto px-2 md:px-6">
+            {children}
+          </div>
         </main>
       </div>
     </div>
