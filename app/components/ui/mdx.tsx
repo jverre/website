@@ -3,6 +3,7 @@ import Image from 'next/image'
 import { highlight } from 'sugar-high'
 import React from 'react'
 import Digression from '../blog/Digression'
+import References from '../blog/References'
 import Collapsible from './Collapsible'
 
 function Table({ data }) {
@@ -92,5 +93,6 @@ export const mdxComponents = {
   code: Code,
   Table,
   Digression,
+  References,
   Collapsible,
 }

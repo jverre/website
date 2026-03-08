@@ -1,0 +1,42 @@
+---
+title: 'The (ultimate) guide to Firecracker'
+date: '2026-03-01'
+summary: 'A step by step guide to building with Firecracker, the open-source VMM behind AI sandboxes.'
+image: '/img/blog/firecracker-banner.png'
+series: 'firecracker'
+seriesOrder: '1'
+---
+
+Sandboxes are the latest hot topic when it comes to AI infrastructure as they are a core component for running agents safely. Interestingly,
+the space is hyper competitive with dozens of startups (Daytona, Modal, E2B, etc) and large companies (Vercel, Cloudflare, etc) competing with
+similar product offerings.
+
+This level of competition is unusual in the infrastructure space. The reason is that they are all built on top
+of a decades-old open-source project called Firecracker that was developed by AWS to power their AWS Lambda product offering.
+
+There aren't many tutorials on Firecracker and it's quite a complicated topic that we will cover step by step. While this is the (ultimate) guide
+to Firecracker, it is prone to mistakes and revisions so if you notice anything incorrect just let me know on X at `@jverre` and I'll fix it !
+
+<Digression>
+These blogs are written by me, not generated with AI and as such will include typos here and there.
+</Digression>
+
+The guides are going to be released part by part as I build an open-source sandbox orchestration tool. We'll cover:
+1. [Gentle introduction to Firecracker](/blog/gentle-introduction-to-firecracker)
+2. Getting started - Running our first VM
+    - [Running a basic VM in Firecracker](/blog/running-basic-vm-in-firecracker)
+    - Creating your own VM kernel (coming soon)
+    - Setting up networking for your VMs (coming soon)
+3. [Optimizing for performance](/blog/optimizing-firecracker-performance)
+    - [Firecracker snapshots](/blog/optimizing-firecracker-performance#firecracker-snapshots)
+    - [Creating many VMs from a single snapshot](/blog/optimizing-firecracker-performance#creating-many-vms-from-a-single-snapshot)
+    - [Benchmarking VM startup times](/blog/optimizing-firecracker-performance#benchmarking-vm-startup-times)
+4. Running Firecracker securely (coming soon)
+    - What is the Firecracker Jailer ?
+    - Running VMs in production safe isolation
+    - Setting up monitoring and logging
+
+
+<References>
+  - https://firecracker-microvm.github.io/
+</References>

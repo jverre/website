@@ -6,6 +6,8 @@ type Metadata = {
   date: string
   summary: string
   image?: string
+  series?: string
+  seriesOrder?: string
 }
 
 function parseFrontmatter(fileContent: string) {
@@ -56,6 +58,25 @@ export function getBlogPosts() {
     if (!a.metadata?.date || !b.metadata?.date) return 0;
     return new Date(b.metadata.date).getTime() - new Date(a.metadata.date).getTime();
   });
+}
+
+export function getSeriesNavigation(series: string, currentSlug: string) {
+  const posts = getBlogPosts()
+  const seriesPosts = posts
+    .filter((p) => p.metadata.series === series)
+    .sort((a, b) => {
+      const orderA = parseInt(a.metadata.seriesOrder || '0', 10)
+      const orderB = parseInt(b.metadata.seriesOrder || '0', 10)
+      return orderA - orderB
+    })
+
+  const currentIndex = seriesPosts.findIndex((p) => p.slug === currentSlug)
+  if (currentIndex === -1) return null
+
+  return {
+    previous: currentIndex > 0 ? seriesPosts[currentIndex - 1] : null,
+    next: currentIndex < seriesPosts.length - 1 ? seriesPosts[currentIndex + 1] : null,
+  }
 }
 
 export function formatDate(date: string, includeRelative = false) {

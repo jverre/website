@@ -1,0 +1,126 @@
+---
+title: 'A gentle introduction to Firecracker'
+date: '2026-03-02'
+summary: 'What is Firecracker and when should I use it ?'
+series: 'firecracker'
+seriesOrder: '2'
+---
+
+# A gentle introduction to AWS firecracker
+
+The demand for sandboxes is exploding due to the popularity of agents and the majority of these run
+thanks to Firecracker. In this blog, we will cover what Firecracker is and when to use it. If you
+are looking to just run some code and get started, check out the [next article on running a basic VM](/blog/running-basic-vm-in-firecracker).
+
+This is part of the [(ultimate) guide to Firecracker](/blog/firecracker) series.
+
+## Security and why Docker is not good enough
+
+When thinking about running code safely, there is one main question to ask: "Do I trust the code I will run ?". There is
+a big difference between running code you wrote and therefore `trust` and running arbitrary user code. If you `trust`
+the code, then using Docker is a no brainer and a great option to package and execute your code in a reliable way.
+However if you don't "trust" the code, Docker isn't the right solution as it doesn't have enough security guarantees.
+
+To understand this, let's deep-dive into how Docker runs.
+
+### How does Docker work ?
+
+Docker doesn't run a separate operating system, instead each container runs as a separate process on the host machine.
+Each process is isolated using a combination of namespaces and cgroups.
+
+<Digression>
+Namespaces let you give processes a restricted view of the system. There are a total of 8 namespaces with the most relevant ones being:
+- PID: Docker containers see their process as PID 1 and can't see any host process
+- Mount: Docker containers only see their own `/` root and can't see host files
+- User: Docker containers think they're root but are actually unprivileged on host
+
+Namespaces aren't security features per se, a process in a PID namespace isn't blocked from interacting with other processes in a different
+namespace it's just that it doesn't even know they exist.
+</Digression>
+
+<Digression>
+Control Groups (often shortened to cgroups) limit how much resources (commonly CPU and memory) a process can consume. This allows
+you to limit the resources a container consumes allowing you to run multiple containers on the same host without one container
+slowing down another.
+</Digression>
+
+### Docker's security flaw
+
+The main security flaw with Docker is that they are just Linux processes running in different namespaces, as a result if there is
+a Kernel vulnerability a container can escape and access the host. These are serious vulnerability issues that are always patched
+quickly but the surface area for attack is just too large and CVE's are commonly found (see [CVE-2025-9074](https://nvd.nist.gov/vuln/detail/CVE-2025-9074)
+or [CVE-2025-31133](https://nvd.nist.gov/vuln/detail/CVE-2025-31133)).
+
+If you trust the code you are executing, then Docker is a great choice but for running untrusted user code we need a different
+approach which is where Firecracker comes in.
+
+## CPU level isolation
+
+As we've seen, Docker simply runs containers as processes which is not secure enough to run untrusted user code. Firecracker takes
+a different approach, it's a `VMM` (Virtual Machine Monitor) which relies on the `KVM` (Kernel-based Virtual Machine) Linux module.
+
+## What is the `KVM` Linux module ?
+
+`KVM` stands for Kernel-based Virtual Machine and it's a Linux kernel module that allows you to host multiple
+isolated virtual machines. While each VM is still a Linux process as with Docker containers, it doesn't rely
+on namespaces. Instead it uses something called the CPU guest mode.
+
+### CPU Guest mode
+In the mid 2000s, both Intel and AMD added virtualization extensions to their CPUs (Intel VT-x and AMD-V). These
+add a new "guest mode" to the CPU allowing a guest OS to execute instructions directly on the hardware at native
+speed while the CPU itself enforces isolation between guest and host. Not all operations can be run directly, for example
+when the guest OS tries to access a hardware device, the CPU triggers a "VM exit" which is when KVM kicks in.
+
+Some VM exits are simple enough that the KVM can simply handle them but for more complex things like "the guest
+wants to send a network packet", it passes that up to userspace which in our case would be Firecracker.
+
+### Accessing KVM
+
+Linux exposes modules using device files, these are not actual files but instead interfaces to kernel functionality that
+look like files. For example `/dev/null` is a black hole you can write to and `/dev/random` gives you random bytes. For
+KVM, the device file is `/dev/kvm`.
+
+When you open `/dev/kvm`, the kernel returns a file descriptor (small integer that represents your connection to the KVM
+module) that you can use for future operations:
+
+```
+int kvm_fd = open("/dev/kvm", O_RDWR);
+```
+
+While normal files support `read()` and `write()`, the KVM needs richer commands and so instead we use `ioctl`
+(input / output control) which allows you to send arbitrary commands to a device with optional arguments:
+
+```
+// Create a new VM — returns a new file descriptor for that VM
+int vm_fd = ioctl(kvm_fd, KVM_CREATE_VM, 0);
+
+// Create a virtual CPU on that VM
+int vcpu_fd = ioctl(vm_fd, KVM_CREATE_VCPU, 0);
+
+// Start executing guest code (blocks until a VM exit)
+ioctl(vcpu_fd, KVM_RUN, 0);
+```
+
+Instead of interacting directly with the `KVM`, we will use Firecracker that provides a simpler abstraction layer to
+interact with the `KVM`.
+
+## Firecracker
+
+When AWS was working on supporting the ability to run untrusted customer code in Lambda functions they needed CPU level
+security. QEMU was a popular Virtual Machine Monitor at the time but it emulates a full PC and so it is both slower and at
+higher risk of security vulnerabilities, which is why they created Firecracker.
+
+Firecracker is a lightweight VMM (Virtual Machine Monitor) that uses KVM to create and manage microVMs. It provides CPU
+level security while being able to start in less than `100ms`. Once Firecracker is running, you interact with it via an
+API to start, manage and stop microVMs.
+
+Firecracker only handles the VM itself though, you still need to handle the networking, orchestration and image building
+which is no easy feat at scale. This is why there are so many sandbox startups,
+Firecracker gives you the building block but there's a lot of work to turn it into a usable
+product.
+
+We'll give it a shot though ! Let's jump into some code and [get our first MicroVM running](/blog/running-basic-vm-in-firecracker) !
+
+<References>
+  - https://ubuntu.com/blog/kvm-hyphervisor
+</References>
