@@ -44,6 +44,13 @@ export const metadata: Metadata = {
     siteName: 'Jacques Verré',
     locale: 'en_US',
     type: 'website',
+    images: [{ url: `${baseUrl}/og?title=${encodeURIComponent('Jacques Verré')}`, width: 1200, height: 630 }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Jacques Verré',
+    description: 'Thoughts about the LLM space.',
+    images: [`${baseUrl}/og?title=${encodeURIComponent('Jacques Verré')}`],
   },
   // robots: {
   //   index: true,
