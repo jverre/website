@@ -200,14 +200,13 @@ const ThreeJsChatResponse: React.FC<ThreeJsChatResponseProps> = ({ onCodeRequest
     <div className="flex flex-col h-full">
       {prompt ? (
         <>
-          {/* Header */}
-          <div className="mb-4">
-            <div className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center justify-between">
-              <div className="flex items-center">
+          <div className="ascii-header">
+            <div className="ascii-header-row">
+              <div className="ascii-prompt-label">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                 </svg>
-                Prompt: <span className="ml-1.5 text-blue-600 dark:text-blue-400 font-normal">"{prompt}"</span>
+                Prompt: <span className="ascii-prompt-value">"{prompt}"</span>
               </div>
               <button 
                 onClick={() => {
@@ -217,36 +216,35 @@ const ThreeJsChatResponse: React.FC<ThreeJsChatResponseProps> = ({ onCodeRequest
                   setIsCodeVisible(false);
                   lastPromptRef.current = null;
                 }}
-                className="text-xs text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+                className="ascii-clear"
               >
                 Clear
               </button>
             </div>
             
-            {/* Loading or Code Preview */}
-            <div className="w-full h-[300px] bg-gray-100 dark:bg-gray-800 rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700 shadow-sm">
+            <div className="ascii-preview">
               {isLoading ? (
-                <div className="w-full h-full flex items-center justify-center">
-                  <div className="flex flex-col items-center">
-                    <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-500 mb-2"></div>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">Generating Three.js code with Claude...</p>
+                <div className="ascii-loading">
+                  <div className="ascii-loading-copy">
+                    <div className="ascii-spinner"></div>
+                    <p>Generating Three.js code with Claude...</p>
                     {generatedCode && (
-                      <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">
+                      <p className="ascii-subtle">
                         Received {generatedCode.length} characters so far...
                       </p>
                     )}
                   </div>
                 </div>
               ) : error ? (
-                <div className="w-full h-full flex items-center justify-center">
-                  <div className="bg-gray-800 p-4 rounded-lg max-w-xs text-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-amber-500 mx-auto mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <div className="ascii-loading">
+                  <div className="ascii-error-box">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-[var(--accent)] mx-auto mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                     </svg>
-                    <p className="text-white text-sm">{error}</p>
+                    <p>{error}</p>
                     <button 
                       onClick={() => setError(null)} 
-                      className="mt-3 px-3 py-1 bg-gray-700 hover:bg-gray-600 text-white text-xs rounded"
+                      className="ascii-secondary-button mt-3"
                     >
                       Dismiss
                     </button>
@@ -255,18 +253,16 @@ const ThreeJsChatResponse: React.FC<ThreeJsChatResponseProps> = ({ onCodeRequest
               ) : generatedCode ? (
                 <ThreeJsRenderer threeJsCode={generatedCode} />
               ) : (
-                /* Intentionally left blank */
-                <div className="w-full h-full"></div>
+                <div className="ascii-empty"></div>
               )}
             </div>
           </div>
           
-          {/* Code Toggle Button */}
-          <div className="flex items-center justify-between mb-2">
+          <div className="ascii-toolbar">
             <div className="flex space-x-2">
               <button 
                 onClick={toggleCodeVisibility}
-                className="flex items-center text-xs bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 py-1 px-3 rounded-md transition-colors"
+                className="ascii-secondary-button"
               >
                 <svg 
                   xmlns="http://www.w3.org/2000/svg" 
@@ -279,7 +275,7 @@ const ThreeJsChatResponse: React.FC<ThreeJsChatResponseProps> = ({ onCodeRequest
                 </svg>
                 {isCodeVisible ? 'Hide Code' : 'Show Code'}
                 {isLoading && generatedCode && (
-                  <span className="ml-2 text-xs text-blue-500 animate-pulse">
+                  <span className="ml-2 text-[var(--accent)] animate-pulse">
                     Streaming...
                   </span>
                 )}
@@ -289,7 +285,7 @@ const ThreeJsChatResponse: React.FC<ThreeJsChatResponseProps> = ({ onCodeRequest
             {isCodeVisible && generatedCode && (
               <button 
                 onClick={handleCopyCode}
-                className="flex items-center text-xs bg-blue-50 dark:bg-blue-900/30 hover:bg-blue-100 dark:hover:bg-blue-800/40 text-blue-600 dark:text-blue-400 py-1 px-3 rounded-md transition-colors"
+                className="ascii-primary-button"
               >
                 <svg 
                   xmlns="http://www.w3.org/2000/svg" 
@@ -305,27 +301,26 @@ const ThreeJsChatResponse: React.FC<ThreeJsChatResponseProps> = ({ onCodeRequest
             )}
           </div>
           
-          {/* CodeMirror Editor */}
           {isCodeVisible && (
-            <div className="rounded-lg overflow-hidden border border-gray-700 shadow-inner mb-4" style={{ height: "60vh", maxHeight: "800px" }}>
+            <div className="ascii-code-shell" style={{ height: '60vh', maxHeight: '800px' }}>
               <div ref={editorRef} className="w-full h-full" />
             </div>
           )}
         </>
       ) : (
         <div className="flex-1 flex items-center justify-center">
-          <div className="text-center p-8 rounded-lg bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 max-w-md mx-auto">
+          <div className="ascii-empty max-w-md mx-auto">
             <div className="mb-4 flex justify-center">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-gray-400 dark:text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-[var(--ink-ghost)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
               </svg>
             </div>
-            <h3 className="text-lg font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <div className="ascii-empty-copy">
+              <h3 className="text-lg font-medium text-[var(--ink)] mb-2">
               Three.js Visualizer
-            </h3>
-            <p className="text-gray-600 dark:text-gray-400 mb-2">
-              Enter a prompt below to generate a Three.js visualization.
-            </p>
+              </h3>
+              <p>Enter a prompt below to generate a Three.js visualization.</p>
+            </div>
           </div>
         </div>
       )}

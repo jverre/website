@@ -21,27 +21,26 @@ export function TableOfContents({ contentRef }: TableOfContentsProps) {
   useEffect(() => {
     if (!contentRef.current) return
 
-    // Extract headings from the content
     const elements = contentRef.current.querySelectorAll('h2, h3, h4')
     const headingData: HeadingData[] = Array.from(elements).map((element) => ({
       id: element.id,
       text: element.textContent || '',
-      level: Number(element.tagName.charAt(1))
+      level: Number(element.tagName.charAt(1)),
     }))
     setHeadings(headingData)
 
-    // Set up intersection observer
-    const callback: IntersectionObserverCallback = (entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          setActiveId(entry.target.id)
-        }
-      })
-    }
-
-    const observer = new IntersectionObserver(callback, {
-      rootMargin: '-100px 0px -66%'
-    })
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setActiveId(entry.target.id)
+          }
+        })
+      },
+      {
+        rootMargin: '-100px 0px -66%',
+      }
+    )
 
     elements.forEach((element) => observer.observe(element))
 
@@ -51,24 +50,18 @@ export function TableOfContents({ contentRef }: TableOfContentsProps) {
   if (headings.length === 0 || isSidebarOpen) return null
 
   return (
-    <div className="hidden xl:block absolute left-full ml-8 w-80 top-24">
-      <div className="sticky top-24">
-        <nav className="relative">
-          <h4 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4 !mt-0">
-            Table of Contents
-          </h4>
-          <ul className="space-y-2.5 max-h-[calc(100vh-16rem)] overflow-y-hidden">
+    <div className="hidden xl:block absolute left-full ml-8 w-64 top-24">
+      <div className="blog-toc">
+        <nav>
+          <h4 className="blog-toc-title !mt-0">Table of Contents</h4>
+          <ul className="blog-toc-list">
             {headings.map((heading) => (
               <li key={heading.id}>
                 <a
                   href={`#${heading.id}`}
-                  className={`block text-sm ${
+                  className={`blog-toc-link ${
                     heading.level === 3 ? 'pl-4' : heading.level === 4 ? 'pl-8' : ''
-                  } ${
-                    activeId === heading.id
-                      ? 'text-blue-600 dark:text-blue-400'
-                      : 'text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-200'
-                  } transition-colors duration-200`}
+                  } ${activeId === heading.id ? 'blog-toc-link-active' : ''}`}
                 >
                   {heading.text}
                 </a>
@@ -79,4 +72,4 @@ export function TableOfContents({ contentRef }: TableOfContentsProps) {
       </div>
     </div>
   )
-} 
+}

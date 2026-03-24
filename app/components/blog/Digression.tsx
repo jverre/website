@@ -35,7 +35,6 @@ export default function Digression({ children }: DigressionProps) {
 
   return (
     <>
-      {/* Margin note for large screens - positioned in right margin */}
       <div className="hidden xl:block relative" ref={containerRef}>
         <aside 
           ref={asideRef}
@@ -45,24 +44,19 @@ export default function Digression({ children }: DigressionProps) {
             opacity: isPositioned ? 1 : 0
           }}
         >
-          <div className="bg-neutral-50/90 dark:bg-neutral-900/90 border border-neutral-200 dark:border-neutral-700 rounded-lg p-4 shadow-lg backdrop-blur-sm">
-            <div className="text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wide mb-2 opacity-75">
-              Aside
-            </div>
-            <div className="text-sm text-neutral-600 dark:text-neutral-400 italic leading-relaxed">
+          <div className="note-card shadow-[0_18px_45px_rgba(50,35,16,0.08)] backdrop-blur-sm">
+            <div className="note-label">Aside</div>
+            <div className="note-content italic">
               {children}
             </div>
           </div>
         </aside>
       </div>
       
-      {/* Inline fallback for smaller screens */}
       <aside className="xl:hidden my-6">
-        <div className="bg-neutral-50/50 dark:bg-neutral-800/30 border-l-4 border-neutral-300 dark:border-neutral-600 rounded-r-lg p-4">
-          <div className="text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wide mb-2 opacity-75">
-            Aside
-          </div>
-          <div className="text-sm text-neutral-600 dark:text-neutral-400 italic leading-relaxed">
+        <div className="note-card border-l-[3px] border-l-[var(--rule-strong)]">
+          <div className="note-label">Aside</div>
+          <div className="note-content italic">
             {children}
           </div>
         </div>

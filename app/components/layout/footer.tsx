@@ -18,14 +18,21 @@ function ArrowIcon() {
 
 export default function Footer() {
   return (
-    <footer className="w-full border-t border-neutral-200/80 dark:border-neutral-800/80 mt-20 py-12">
-        <div className="flex flex-col sm:flex-row justify-between items-center gap-8 sm:gap-4 text-sm">
-          <p className="text-neutral-600 dark:text-neutral-400 order-2 sm:order-1">
-            © {new Date().getFullYear()} MIT Licensed
-          </p>
-          <div className="flex items-center gap-4 order-1 sm:order-2">
+    <footer className="site-footer">
+        <div className="site-footer-grid">
+          <div className="site-footer-cell">
+            <span className="site-footer-label">Project</span>
+            <span className="site-footer-value">Jacques Verré</span>
+          </div>
+          <div className="site-footer-cell">
+            <span className="site-footer-label">License</span>
+            <span className="site-footer-value">MIT Licensed</span>
+          </div>
+          <div className="site-footer-cell site-footer-links">
+            <span className="site-footer-label">Links</span>
+            <div className="site-footer-link-row">
             <a
-              className="flex items-center gap-2 text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white transition-colors"
+              className="site-footer-link"
               rel="noopener noreferrer"
               target="_blank"
               href="/rss"
@@ -34,7 +41,7 @@ export default function Footer() {
               <span>rss</span>
             </a>
             <a
-              className="flex items-center gap-2 text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white transition-colors"
+              className="site-footer-link"
               rel="noopener noreferrer"
               target="_blank"
               href="https://github.com/jverre/"
@@ -43,7 +50,7 @@ export default function Footer() {
               <span>github</span>
             </a>
             <a
-              className="flex items-center gap-2 text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white transition-colors"
+              className="site-footer-link"
               rel="noopener noreferrer"
               target="_blank"
               href="https://github.com/jverre/website"
@@ -51,6 +58,7 @@ export default function Footer() {
               <ArrowIcon />
               <span>view source</span>
             </a>
+            </div>
           </div>
         </div>
     </footer>

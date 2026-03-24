@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { Github, ExternalLink } from 'lucide-react'
+import { ArrowRight, ExternalLink, Github } from 'lucide-react'
 
 interface Project {
   title: string
@@ -46,68 +46,54 @@ export default function ProjectList({ showAll = false }: { showAll?: boolean }) 
   const displayProjects = showAll ? projects : projects.slice(0, 3)
 
   return (
-    <div className="max-w-2xl">
-      <h2 className="text-xs font-medium text-muted-foreground mb-6 uppercase tracking-wider">
-        Featured projects
-      </h2>
-      <div className="space-y-6">
-        {displayProjects.map((project) => (
-          <article 
-            key={project.title}
-            className="group relative"
-          >
-            <div className="flex flex-col gap-2">
-              <div className="flex items-center gap-3">
-                <h3 className="text-base font-medium group-hover:text-primary transition-colors">
-                  {project.title}
-                </h3>
-                <div className="flex items-center gap-3">
-                  {project.websiteUrl && (
-                    <Link
-                      href={project.websiteUrl}
-                      className="flex items-center gap-1.5 text-xs text-muted-foreground/60 hover:text-primary transition-colors"
-                      target="_blank"
-                    >
-                      <ExternalLink className="h-4 w-4" />
-                      <span>{project.websiteUrl.replace('https://', '')}</span>
-                    </Link>
-                  )}
-                  <Link
-                    href={project.repoUrl}
-                    className="text-muted-foreground/60 hover:text-primary transition-colors"
-                    target="_blank"
-                  >
-                    <Github className="h-4 w-4" />
-                  </Link>
-                </div>
+    <div>
+      <div className="list-grid">
+        {displayProjects.map((project, index) => (
+          <article key={project.title} className="list-card">
+            <div className="list-card-kicker">Project {String(index + 1).padStart(2, '0')}</div>
+            <div className="list-card-header">
+              <div className="min-w-0 space-y-3">
+                <h3 className="list-card-title">{project.title}</h3>
+                <p className="list-card-summary">{project.description}</p>
               </div>
-              <p className="text-sm text-muted-foreground/80 leading-relaxed">
-                {project.description}
-              </p>
-              <div className="flex flex-wrap gap-4 mt-1">
-                {project.tags.map((tag) => (
-                  <span 
-                    key={tag}
-                    className="py-0.5 text-xs rounded-full bg-muted/50 text-muted-foreground/70"
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </div>
+              <span className="meta-pill list-card-meta">{project.updatedAt}</span>
+            </div>
+
+            <div className="tag-list">
+              {project.tags.map((tag) => (
+                <span key={tag} className="tag-chip">
+                  {tag}
+                </span>
+              ))}
+            </div>
+
+            <div className="project-link-row mt-4">
+              {project.websiteUrl && (
+                <Link href={project.websiteUrl} className="project-inline-link" target="_blank">
+                  <ExternalLink className="h-4 w-4" />
+                  {project.websiteUrl.replace('https://', '')}
+                </Link>
+              )}
+              <Link href={project.repoUrl} className="project-inline-link" target="_blank">
+                <Github className="h-4 w-4" />
+                View repository
+              </Link>
+              <span className="paper-inline-link">
+                Shipping notes
+                <ArrowRight className="h-4 w-4" />
+              </span>
             </div>
           </article>
         ))}
       </div>
       {!showAll && (
-        <div className="flex justify-end mt-8">
-          <Link 
-            href="/projects" 
-          className="text-sm text-muted-foreground hover:text-primary transition-colors"
-        >
-            View all projects →
+        <div className="mt-6 flex justify-end">
+          <Link href="/projects" className="paper-inline-link">
+            View all projects
+            <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
       )}
     </div>
   )
-} 
+}

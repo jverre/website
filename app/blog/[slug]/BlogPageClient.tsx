@@ -8,26 +8,28 @@ export default function BlogPageClient({ children, image }: { children: React.Re
   const contentRef = useRef<HTMLDivElement>(null)
 
   return (
-    <div className="relative py-10">
+    <div className="article-layout">
       <TableOfContents contentRef={contentRef} />
-      {image && (
-        <div className="mb-8 overflow-hidden rounded-lg">
-          <Image
-            src={image}
-            alt=""
-            width={1200}
-            height={630}
-            className="w-full h-auto"
-            priority
-          />
-        </div>
-      )}
-      <article
-        ref={contentRef}
-        className="prose dark:prose-invert"
-      >
-        {children}
-      </article>
+      <div className="section-rule">
+        <span>Fig. 5 - Essay</span>
+      </div>
+      <div className="article-shell">
+        {image && (
+          <div className="article-media">
+            <Image
+              src={image}
+              alt=""
+              width={1200}
+              height={630}
+              className="w-full h-auto"
+              priority
+            />
+          </div>
+        )}
+        <article ref={contentRef} className="prose">
+          {children}
+        </article>
+      </div>
     </div>
   )
-} 
+}

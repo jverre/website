@@ -1,7 +1,6 @@
 import './global.css'
 import type { Metadata } from 'next'
-import { GeistSans } from 'geist/font/sans'
-import { GeistMono } from 'geist/font/mono'
+import { Courier_Prime, Manrope } from 'next/font/google'
 import Header from './components/layout/header'
 import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/next'
@@ -58,7 +57,16 @@ export const metadata: Metadata = {
   // },
 }
 
-const cx = (...classes) => classes.filter(Boolean).join(' ')
+const sans = Manrope({
+  subsets: ['latin'],
+  variable: '--font-sans',
+})
+
+const mono = Courier_Prime({
+  subsets: ['latin'],
+  weight: ['400', '700'],
+  variable: '--font-mono',
+})
 
 export default function RootLayout({
   children,
@@ -66,17 +74,10 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html
-      lang="en"
-      className={cx(
-        'text-black bg-white dark:text-white dark:bg-black',
-        GeistSans.variable,
-        GeistMono.variable
-      )}
-    >
-      <body className="antialiased">
+    <html lang="en" className={`${sans.variable} ${mono.variable}`}>
+      <body className="site-body">
         <SidebarProvider>
-          <div className="relative min-h-screen">
+          <div className="site-shell">
             <MainContent>
               <Header />
               {children}

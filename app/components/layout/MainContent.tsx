@@ -8,13 +8,13 @@ export default function MainContent({ children }: { children: ReactNode }) {
 
   return (
     <div
-      className={`transition-all duration-300 ease-in-out w-full ${
+      className={`site-main transition-all duration-300 ease-in-out ${
         isOpen ? 'pr-96' : ''
       }`}
     >
       <div className={isOpen ? 'transform translate-x-[-48px]' : ''}>
-        <main className="flex-auto min-w-0 flex flex-col">
-          <div className="w-full max-w-3xl mx-auto px-2 md:px-6">
+        <main className="site-frame">
+          <div className="site-content">
             {children}
           </div>
         </main>

@@ -8,17 +8,26 @@ export const metadata: Metadata = {
 
 export default function ProjectsPage() {
   return (
-    <>
-      <div className="min-h-screen py-12 md:py-20">
-        <section className="mb-16">
-          <h1 className="text-2xl font-medium mb-4">Projects</h1>
-          <p className="text-base text-muted-foreground">
-            Reference implementations and open-source projects focused on AI and product development.
-          </p>
+    <div className="page-shell">
+      <div className="page-stack">
+        <section className="page-hero">
+          <div className="page-intro">
+            <p className="page-caption">Build Log</p>
+            <h1 className="page-title">Projects that taught me something.</h1>
+            <p className="page-description">
+              A mix of open-source tools, product experiments, and reference implementations centered on
+              LLM workflows and developer tooling.
+            </p>
+          </div>
         </section>
 
-        <ProjectList showAll />
+        <div className="section-rule">
+          <span>Fig. 4 - Project Index</span>
+        </div>
+        <section className="section-panel">
+          <ProjectList showAll />
+        </section>
       </div>
-    </>
+    </div>
   )
-} 
+}

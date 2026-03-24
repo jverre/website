@@ -29,22 +29,26 @@ export default function Header() {
   }, [])
 
   const linkClass = (active: boolean) =>
-    `text-sm tracking-wide transition-colors ${
+    `site-nav-link ${
       active
-        ? 'text-neutral-900 font-medium dark:text-white'
-        : 'text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white'
+        ? 'site-nav-link-active'
+        : ''
     }`
 
   return (
-    <header className="w-full border-b border-neutral-200/80 dark:border-neutral-800/80">
-        <nav className="flex h-20 items-center justify-between">
+    <header className="site-header">
+        <nav className="site-nav">
           <Link
             href="/"
-            className="text-2xl font-semibold tracking-tight hover:text-neutral-600 transition-colors"
+            className="site-logo"
           >
-            JV
+            <span className="site-logo-mark">JV</span>
+            <span className="site-logo-text">
+              Jacques Verré
+              <span>Build and Learn</span>
+            </span>
           </Link>
-          <div className="flex items-center gap-6">
+          <div className="site-nav-links">
             <Link href="/" className={linkClass(pathname === '/')}>
               Home
             </Link>
@@ -53,13 +57,13 @@ export default function Header() {
             </Link>
             <div
               ref={dropdownRef}
-              className="relative"
+              className="site-dropdown"
               onMouseEnter={() => setSeriesOpen(true)}
               onMouseLeave={() => setSeriesOpen(false)}
             >
               <button
                 onClick={() => setSeriesOpen((prev) => !prev)}
-                className={`flex items-center gap-1 ${linkClass(false)}`}
+                className={`site-nav-link flex items-center gap-1 ${seriesOpen ? 'site-nav-link-active' : ''}`}
               >
                 Series
                 <ChevronDown
@@ -68,24 +72,22 @@ export default function Header() {
                 />
               </button>
               {seriesOpen && (
-                <div className="absolute right-0 top-full pt-2 w-64 z-50">
-                <div className="rounded-lg border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 shadow-lg py-1">
+                <div className="site-dropdown-panel">
                   {series.map((s) => (
                     <Link
                       key={s.href}
                       href={s.href}
                       onClick={() => setSeriesOpen(false)}
-                      className="block px-4 py-3 hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-colors"
+                      className="site-dropdown-item"
                     >
-                      <div className="text-sm font-medium text-neutral-900 dark:text-neutral-100">
+                      <div className="site-dropdown-title">
                         {s.name}
                       </div>
-                      <div className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5">
+                      <div className="site-dropdown-description">
                         {s.description}
                       </div>
                     </Link>
                   ))}
-                </div>
                 </div>
               )}
             </div>
