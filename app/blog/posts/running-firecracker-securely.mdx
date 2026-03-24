@@ -1,0 +1,238 @@
+---
+title: 'Running Firecracker securely'
+date: '2026-03-23'
+summary: 'Using the jailer, namespaces and cleanup to run Firecracker safely in production'
+series: 'firecracker'
+seriesOrder: '6'
+---
+
+In the [previous article](/blog/setting-up-networking-for-your-vms) we gave our VMs internet access and a stable networking setup.
+We can now boot many VMs and talk to them reliably. The next question is: how do we make sure the host side of this setup is
+actually safe?
+
+Firecracker gives us strong isolation between the guest and the host CPU, but the Firecracker process itself still runs on the
+host. If we start that process as `root` and hand it arbitrary host paths, then one bug in our orchestration code becomes a
+security problem.
+
+In Flint, the answer is to run every VM through the `jailer`. This gives each VM:
+1. Its own chroot directory
+2. Its own network namespace
+3. An unprivileged UID and GID
+4. A dedicated cgroup that can be cleaned up when the VM dies
+
+Let's walk through what that means in practice.
+
+## What is the Firecracker Jailer ?
+
+The `jailer` is a small wrapper shipped with Firecracker. Its job is to prepare a restricted environment and then `exec`
+the real `firecracker` binary inside it.
+
+This matters because once Firecracker is running, we want it to see as little of the host as possible. In Flint, the command
+we build looks like this:
+
+```python
+def build_jailer_command(spec: JailSpec) -> list[str]:
+    return [
+        JAILER_BINARY,
+        "--id", spec.vm_id,
+        "--exec-file", FIRECRACKER_BINARY,
+        "--uid", str(JAILER_UID),
+        "--gid", str(JAILER_GID),
+        "--chroot-base-dir", JAILER_BASE_DIR,
+        "--cgroup-version", str(JAILER_CGROUP_VER),
+        "--netns", f"/var/run/netns/{spec.ns_name}",
+        "--",
+        "--api-sock", "firecracker.sock",
+    ]
+```
+
+This does a few important things for us:
+
+- `--uid` and `--gid` ensure Firecracker does not keep running as `root`
+- `--chroot-base-dir` gives every VM its own filesystem view under `/srv/jailer`
+- `--netns` moves the process into the VM's network namespace before Firecracker starts
+- `--api-sock firecracker.sock` keeps the API socket inside the jail instead of somewhere global on the host
+
+For a VM with id `1234`, the resulting layout looks like:
+
+```bash
+/srv/jailer/firecracker/1234/
++-- root/
+    |-- firecracker.sock
+    |-- firecracker.log
+    |-- mem
+    |-- rootfs.ext4
+    `-- vmstate
+```
+
+That is a much smaller and easier thing to reason about than a Firecracker process with direct visibility into host paths all over
+the machine.
+
+### Staging files into the chroot
+
+Once Firecracker is inside the jail, it cannot see `/microvms/.golden/rootfs.ext4` or any other host path unless we place it in the
+chroot first. So before we start the process, Flint stages the files it needs:
+
+```python
+def stage_file_into_chroot(src: str, dest_name: str, spec: JailSpec) -> str:
+    dest = f"{spec.chroot_root}/{dest_name}"
+    try:
+        os.link(src, dest)
+    except OSError:
+        shutil.copy2(src, dest)
+    os.chown(dest, JAILER_UID, JAILER_GID)
+    return dest
+```
+
+The nice detail here is that we try a hard-link first and only fall back to a copy if we have to. That keeps the setup fast while
+still ending up with a file owned by the unprivileged jailer user.
+
+There is also one slightly annoying snapshot detail. The `vmstate` file remembers the absolute path of the rootfs from when the
+snapshot was created. In Flint that path points to the golden image on the host. Once we move into the chroot, that original host
+path no longer exists, so we create a symlink inside the jail that points back to `/rootfs.ext4`:
+
+```python
+_snapshot_drive_relpath = snapshot_dir.lstrip("/") + "/rootfs.ext4"
+_snapshot_drive_in_chroot = os.path.join(spec.chroot_root, _snapshot_drive_relpath)
+os.makedirs(os.path.dirname(_snapshot_drive_in_chroot), exist_ok=True)
+os.symlink("/rootfs.ext4", _snapshot_drive_in_chroot)
+```
+
+This is one of those details that looks weird the first time you see it but it keeps snapshot restore working cleanly inside the jail.
+
+## Running VMs in production safe isolation
+
+At this point we have all the building blocks from the earlier articles:
+1. A rootfs image
+2. A kernel
+3. A snapshot for fast restore
+4. A dedicated network namespace for each VM
+
+The last step is to put those together in a way that keeps the host side locked down.
+
+The boot flow in Flint looks like this:
+1. Create `/srv/jailer/firecracker/<vm_id>/root`
+2. Stage `rootfs.ext4`, `vmstate` and `mem` into that directory
+3. Create a dedicated network namespace and TAP device for the VM
+4. Start `jailer` with `--netns` pointing at that namespace
+5. Wait for `firecracker.sock` to appear inside the jail
+6. Load the snapshot using chroot-relative paths like `vmstate` and `mem`
+7. Patch the drive to `rootfs.ext4`
+8. Resume the VM
+9. Wait until the guest agent is reachable
+
+Here is the important part of the boot sequence:
+
+```python
+os.makedirs(spec.chroot_root, exist_ok=True)
+os.chown(spec.chroot_root, JAILER_UID, JAILER_GID)
+
+stage_file_into_chroot(rootfs_src, "rootfs.ext4", spec)
+stage_file_into_chroot(f"{snapshot_dir}/vmstate", "vmstate", spec)
+stage_file_into_chroot(f"{snapshot_dir}/mem", "mem", spec)
+
+_setup_netns_pyroute2(ns_name, GOLDEN_TAP, internet=allow_internet_access)
+
+process = subprocess.Popen(
+    build_jailer_command(spec),
+    stdin=subprocess.DEVNULL,
+    stdout=log_fd,
+    stderr=subprocess.STDOUT,
+    start_new_session=True,
+)
+```
+
+The main security win here is that our VM orchestration now has multiple layers:
+
+- The guest is isolated from the host by KVM and Firecracker
+- The Firecracker process is isolated from the host by the jailer's chroot and dropped privileges
+- The guest agent is isolated behind a per-VM network namespace rather than a host-wide TCP port
+- Resource ownership is clear because every VM has a dedicated chroot and cgroup
+
+### Reaching the guest agent
+
+In Flint, the guest agent listens on `172.16.0.2:5000` inside the VM. The daemon does not expose that port globally on the host.
+Instead it first enters the VM's network namespace and only then talks to the guest.
+
+This is a very nice pattern because it keeps the control plane narrow. If a VM dies, deleting the namespace removes that entire path
+with it. There is no long list of host ports to manage and no risk of two VMs fighting over the same listener.
+
+<Digression>
+The jailer is an important layer but it is not magic. If your daemon copies the wrong file into the chroot, the jailer will faithfully
+protect the wrong thing. Security comes from layers: a small filesystem view, dropped privileges, isolated networking, careful APIs,
+timeouts, and good cleanup.
+</Digression>
+
+## Setting up monitoring and logging
+
+Good isolation is only half the story. You also need to know when something died, why it died, and whether cleanup actually happened.
+
+In Flint, every VM gets its own Firecracker log file inside the jail:
+
+```python
+log_path = f"{spec.chroot_root}/firecracker.log"
+with open(log_path, "w") as log_fd:
+    process = subprocess.Popen(
+        build_jailer_command(spec),
+        stdin=subprocess.DEVNULL,
+        stdout=log_fd,
+        stderr=subprocess.STDOUT,
+        start_new_session=True,
+    )
+```
+
+That log lives right next to the API socket and staged files, which makes debugging much easier because all the host-side state for a
+single VM sits in one place.
+
+Flint also keeps a daemon debug log at `/tmp/flint/flint-debug.log` and runs a background health monitor that checks whether each VM
+process is still alive:
+
+```python
+try:
+    os.kill(pid, 0)
+except ProcessLookupError:
+    alive = False
+
+if alive:
+    self._store.update_health(vm_id, now)
+else:
+    entry.state = SandboxState.ERROR
+```
+
+This is intentionally simple. If the Firecracker process disappears, we mark the sandbox as errored and let the rest of the system react.
+Simple checks like this go a long way when you are operating lots of short-lived VMs.
+
+### Cleanup
+
+The last piece is making sure isolation is removed when the VM goes away. Flint tears down the process, deletes the namespace, removes the
+chroot directory, and removes the cgroup entries:
+
+```python
+def _teardown_vm(process, ns_name: str, chroot_base: str, vm_id: str) -> None:
+    if process:
+        process.kill()
+        process.wait(timeout=2)
+    _delete_netns(ns_name)
+    cleanup_jailer(chroot_base, vm_id)
+```
+
+And `cleanup_jailer()` removes both the chroot tree and the cgroup directories under `/sys/fs/cgroup/...`.
+
+This is not just a nice cleanup detail, it is part of the security model. If old chroots, sockets or cgroups stick around after a VM dies,
+you eventually end up with stale state that is hard to reason about and even harder to debug.
+
+We even have end-to-end tests that check the chroot exists while the VM is running and is gone after `sandbox.kill()`. That is the sort of
+test that is easy to skip early on but it pays for itself very quickly.
+
+## Final thoughts
+
+At this point we have a pretty good baseline:
+1. CPU isolation from KVM
+2. Minimal host visibility through the jailer
+3. Per-VM network isolation
+4. Per-VM logs and health checks
+5. Deterministic cleanup of chroots, namespaces and cgroups
+
+That does not mean the system is "done" from a security perspective. At higher scale you would still want stronger metrics, alerting,
+rate limiting, stricter guest images and probably central log aggregation. But compared to launching Firecracker directly as a root process,
+this is already a huge step forward.
