@@ -45,7 +45,7 @@ export default function Header() {
             <span className="site-logo-mark">JV</span>
             <span className="site-logo-text">
               Jacques Verré
-              <span>Build and Learn</span>
+              <span>Essays and Build Notes</span>
             </span>
           </Link>
           <div className="site-nav-links">
@@ -62,6 +62,7 @@ export default function Header() {
               onMouseLeave={() => setSeriesOpen(false)}
             >
               <button
+                type="button"
                 onClick={() => setSeriesOpen((prev) => !prev)}
                 className={`site-nav-link flex items-center gap-1 ${seriesOpen ? 'site-nav-link-active' : ''}`}
               >

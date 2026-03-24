@@ -38,7 +38,7 @@ export default function Digression({ children }: DigressionProps) {
       <div className="hidden xl:block relative" ref={containerRef}>
         <aside 
           ref={asideRef}
-          className="absolute left-full ml-8 w-80 z-10"
+          className="absolute left-full ml-6 w-64 z-10"
           style={{ 
             top: `${topOffset}px`,
             opacity: isPositioned ? 1 : 0

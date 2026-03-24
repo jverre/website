@@ -9,26 +9,28 @@ export default function BlogPageClient({ children, image }: { children: React.Re
 
   return (
     <div className="article-layout">
-      <TableOfContents contentRef={contentRef} />
       <div className="section-rule">
         <span>Fig. 5 - Essay</span>
       </div>
-      <div className="article-shell">
-        {image && (
-          <div className="article-media">
-            <Image
-              src={image}
-              alt=""
-              width={1200}
-              height={630}
-              className="w-full h-auto"
-              priority
-            />
-          </div>
-        )}
-        <article ref={contentRef} className="prose">
-          {children}
-        </article>
+      <div className="article-grid">
+        <div className="article-main">
+          {image && (
+            <div className="article-media">
+              <Image
+                src={image}
+                alt=""
+                width={1200}
+                height={630}
+                className="w-full h-auto"
+                priority
+              />
+            </div>
+          )}
+          <article ref={contentRef} className="prose article-prose">
+            {children}
+          </article>
+        </div>
+        <TableOfContents contentRef={contentRef} />
       </div>
     </div>
   )

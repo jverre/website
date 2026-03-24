@@ -6,8 +6,6 @@ import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import Footer from './components/layout/footer'
 import { baseUrl } from './sitemap'
-import Sidebar from './components/layout/Sidebar'
-import { SidebarProvider } from './providers/SidebarContext'
 import MainContent from './components/layout/MainContent'
 
 export const metadata: Metadata = {
@@ -16,7 +14,7 @@ export const metadata: Metadata = {
     default: 'Jacques Verré',
     template: '%s | Jacques Verré',
   },
-  description: 'Thoughts about the LLM space.',
+  description: 'Essays and technical notes about AI products, language models, and software systems.',
   icons: {
     icon: [
       { url: '/icon.png', sizes: '32x32', type: 'image/png' },
@@ -38,7 +36,7 @@ export const metadata: Metadata = {
   manifest: '/manifest.json',
   openGraph: {
     title: 'Jacques Verré',
-    description: 'Thoughts about the LLM space.',
+    description: 'Essays and technical notes about AI products, language models, and software systems.',
     url: baseUrl,
     siteName: 'Jacques Verré',
     locale: 'en_US',
@@ -76,16 +74,13 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${sans.variable} ${mono.variable}`}>
       <body className="site-body">
-        <SidebarProvider>
-          <div className="site-shell">
-            <MainContent>
-              <Header />
-              {children}
-              <Footer />
-            </MainContent>
-            <Sidebar />
-          </div>
-        </SidebarProvider>
+        <div className="site-shell">
+          <MainContent>
+            <Header />
+            {children}
+            <Footer />
+          </MainContent>
+        </div>
         <Analytics />
         <SpeedInsights />
       </body>

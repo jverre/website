@@ -109,7 +109,7 @@ many VMs from a single snapshot as they would all share the same IP.
 The solution to this is to use `network namespaces` on the host OS. Each namespace provides an isolated network
 stack, so the same IP can be reused across namespaces without conflict.
 
-![Networking stack for VMs](/img/blog/networking.png)
+![Networking stack for VMs](/img/blog/networking.png "wide")
 
 In addition to using namespaces, we will also create a unique MAC address and static ARP entry
 so that the first TCP connection doesn't need an ARP round-trip:

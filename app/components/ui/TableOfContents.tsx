@@ -1,7 +1,6 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useSidebar } from '../../providers/SidebarContext'
 
 interface TableOfContentsProps {
   contentRef: React.RefObject<HTMLElement>
@@ -16,7 +15,6 @@ interface HeadingData {
 export function TableOfContents({ contentRef }: TableOfContentsProps) {
   const [headings, setHeadings] = useState<HeadingData[]>([])
   const [activeId, setActiveId] = useState<string>('')
-  const { isOpen: isSidebarOpen } = useSidebar()
 
   useEffect(() => {
     if (!contentRef.current) return
@@ -47,10 +45,10 @@ export function TableOfContents({ contentRef }: TableOfContentsProps) {
     return () => observer.disconnect()
   }, [contentRef])
 
-  if (headings.length === 0 || isSidebarOpen) return null
+  if (headings.length === 0) return null
 
   return (
-    <div className="hidden xl:block absolute left-full ml-8 w-64 top-24">
+    <aside className="blog-toc-column">
       <div className="blog-toc">
         <nav>
           <h4 className="blog-toc-title !mt-0">Table of Contents</h4>
@@ -70,6 +68,6 @@ export function TableOfContents({ contentRef }: TableOfContentsProps) {
           </ul>
         </nav>
       </div>
-    </div>
+    </aside>
   )
 }

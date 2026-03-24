@@ -47,7 +47,34 @@ function CustomLink(props) {
 }
 
 function RoundedImage(props) {
-  return <Image alt={props.alt} className="rounded-lg" {...props} />
+  return (
+    <figure className="article-figure">
+      <div className="article-figure-frame">
+        <Image alt={props.alt} className="article-figure-image" {...props} />
+      </div>
+      {props.alt ? <figcaption className="article-figure-caption">{props.alt}</figcaption> : null}
+    </figure>
+  )
+}
+
+function MarkdownImage(props: React.ImgHTMLAttributes<HTMLImageElement>) {
+  const rawAlt = props.alt || ''
+  const cleanedAlt = rawAlt.replace(/\s*::wide\s*$/i, '').trim()
+  const rawTitle = typeof props.title === 'string' ? props.title.trim().toLowerCase() : ''
+  const isWide = rawTitle === 'wide' || /::wide\s*$/i.test(rawAlt)
+
+  return (
+    <figure className={`article-figure ${isWide ? 'article-figure-wide' : ''}`}>
+      <div className="article-figure-frame">
+        <img
+          {...props}
+          alt={cleanedAlt}
+          className="article-figure-image"
+        />
+      </div>
+      {cleanedAlt ? <figcaption className="article-figure-caption">{cleanedAlt}</figcaption> : null}
+    </figure>
+  )
 }
 
 function Code({ children, ...props }) {
@@ -81,6 +108,19 @@ function createHeading(level: number) {
   }
 }
 
+function hasBlockElement(children: React.ReactNode): boolean {
+  return React.Children.toArray(children).some(
+    (child) => React.isValidElement(child) && (child as React.ReactElement).type === MarkdownImage
+  )
+}
+
+function Paragraph(props: React.HTMLAttributes<HTMLParagraphElement>) {
+  if (hasBlockElement(props.children)) {
+    return <div className="mdx-p" {...props} />
+  }
+  return <p {...props} />
+}
+
 export const mdxComponents = {
   h1: createHeading(1),
   h2: createHeading(2),
@@ -89,6 +129,8 @@ export const mdxComponents = {
   h5: createHeading(5),
   h6: createHeading(6),
   Image: RoundedImage,
+  img: MarkdownImage,
+  p: Paragraph,
   a: CustomLink,
   code: Code,
   Table,

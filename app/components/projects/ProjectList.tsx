@@ -1,5 +1,6 @@
 import Link from 'next/link'
-import { ArrowRight, ExternalLink, Github } from 'lucide-react'
+import { ExternalLink, Github } from 'lucide-react'
+import { formatDate } from 'app/blog/utils'
 
 interface Project {
   title: string
@@ -12,33 +13,32 @@ interface Project {
 
 const projects: Project[] = [
   {
-    title: 'Oscar',
-    description: 'Share all your LLM chats - Works with Cursor, Claude code, ChatGPT and more.',
-    repoUrl: 'https://github.com/jverre/oscar',
-    websiteUrl: 'https://getoscar.ai',
-    tags: ['TypeScript', 'LLMs', 'Open-Source'],
-    updatedAt: '2025-10-24',
-  },
-  {
-    title: 'Opik',
-    description: 'An LLM development platform for debugging, testing and monitoring LLM applications.',
-    repoUrl: 'https://github.com/comet-ml/opik',
-    tags: ['Python', 'Java', 'LLMs', 'Open-Source'],
-    updatedAt: '2025-02-22',
-  },
-  {
-    title: 'Chrome MCP Server',
-    description: 'A Chrome MCP Server - Can be used by Cursor to iterate faster during frontend development.',
-    repoUrl: 'https://github.com/jverre/chrome-mcp-server',
-    tags: ['Python', 'FastAPI', 'MCP', 'Open-Source'],
-    updatedAt: '2025-02-22',
+    title: 'Flint',
+    description: 'Firecracker VM management tool with a Python SDK, daemon API, benchmarks, and optional TUI.',
+    repoUrl: 'https://github.com/jverre/flint',
+    tags: ['Python', 'Firecracker', 'MicroVMs', 'Open-Source'],
+    updatedAt: '2026-03-24',
   },
   {
     title: 'Opik Chat History',
-    description: 'A Cursor extension to log chat history to Opik',
+    description: 'Extension to log your vibecoding sessions to Opik and make LLM work easier to inspect.',
     repoUrl: 'https://github.com/jverre/opik-chat-history',
-    tags: ['Python', 'LLMs', 'Open-Source', 'Cursor'],
-    updatedAt: '2025-06-08',
+    tags: ['TypeScript', 'Cursor', 'LLMs', 'Open-Source'],
+    updatedAt: '2025-09-16',
+  },
+  {
+    title: 'AI SDK',
+    description: 'Python port of the Vercel AI SDK with a single interface for multiple model providers.',
+    repoUrl: 'https://github.com/jverre/ai-sdk',
+    tags: ['Python', 'LLMs', 'SDK', 'Open-Source'],
+    updatedAt: '2025-04-18',
+  },
+  {
+    title: 'Chrome MCP Server',
+    description: 'MCP server to interact with Chrome and validate frontend changes with screenshots and browser actions.',
+    repoUrl: 'https://github.com/jverre/chrome-mcp-server',
+    tags: ['Python', 'MCP', 'Chrome', 'Open-Source'],
+    updatedAt: '2025-02-23',
   },
 ]
 
@@ -56,7 +56,7 @@ export default function ProjectList({ showAll = false }: { showAll?: boolean }) 
                 <h3 className="list-card-title">{project.title}</h3>
                 <p className="list-card-summary">{project.description}</p>
               </div>
-              <span className="meta-pill list-card-meta">{project.updatedAt}</span>
+              <span className="meta-pill list-card-meta">{formatDate(project.updatedAt, false)}</span>
             </div>
 
             <div className="tag-list">
@@ -78,22 +78,10 @@ export default function ProjectList({ showAll = false }: { showAll?: boolean }) 
                 <Github className="h-4 w-4" />
                 View repository
               </Link>
-              <span className="paper-inline-link">
-                Shipping notes
-                <ArrowRight className="h-4 w-4" />
-              </span>
             </div>
           </article>
         ))}
       </div>
-      {!showAll && (
-        <div className="mt-6 flex justify-end">
-          <Link href="/projects" className="paper-inline-link">
-            View all projects
-            <ArrowRight className="h-4 w-4" />
-          </Link>
-        </div>
-      )}
     </div>
   )
 }
