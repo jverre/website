@@ -7,9 +7,9 @@
 }
 
 :root {
-  --paper: #efe7d4;
-  --paper-raised: #f7f0df;
-  --paper-deep: #e6dcc7;
+  --paper: #ece6d9;
+  --paper-raised: #f4efe5;
+  --paper-deep: #e3dcd0;
   --ink: #241d14;
   --ink-light: #5e513f;
   --ink-faint: #867764;
@@ -155,7 +155,7 @@ a {
   z-index: 40;
   margin: 0 calc(var(--content-gutter) * -1);
   padding: 0 var(--content-gutter);
-  background: rgba(239, 231, 212, 0.94);
+  background: rgba(236, 230, 217, 0.94);
   backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--rule-strong);
 }
@@ -733,7 +733,7 @@ a {
   position: sticky;
   top: 112px;
   border: 1px solid var(--rule);
-  background: rgba(247, 240, 223, 0.94);
+  background: rgba(244, 239, 229, 0.94);
   padding: 16px 18px;
 }
 
