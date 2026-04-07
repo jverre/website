@@ -1,0 +1,69 @@
+name: Documentation Preview Link
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Branch name to generate the preview URL for'
+        required: true
+        type: string
+
+jobs:
+  preview-link:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Generate preview URL
+        id: preview
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            BRANCH="${{ github.event.inputs.branch }}"
+          else
+            BRANCH="${{ github.head_ref }}"
+          fi
+
+          # Vercel preview URLs use the branch name with special characters replaced by hyphens
+          SANITIZED_BRANCH=$(echo "$BRANCH" | sed 's/[^a-zA-Z0-9]/-/g' | sed 's/--*/-/g' | sed 's/-$//')
+          PREVIEW_URL="https://website-git-${SANITIZED_BRANCH}-jverre.vercel.app"
+
+          echo "preview_url=$PREVIEW_URL" >> "$GITHUB_OUTPUT"
+          echo "branch=$BRANCH" >> "$GITHUB_OUTPUT"
+          echo "## Preview URL" >> "$GITHUB_STEP_SUMMARY"
+          echo "Branch: \`$BRANCH\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "Preview: $PREVIEW_URL" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Comment on PR
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const previewUrl = '${{ steps.preview.outputs.preview_url }}';
+            const body = `## 📄 Documentation Preview\n\nPreview your changes: [${previewUrl}](${previewUrl})`;
+
+            // Check for existing bot comment to update
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+
+            const botComment = comments.find(c =>
+              c.user.type === 'Bot' && c.body.includes('Documentation Preview')
+            );
+
+            if (botComment) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: botComment.id,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body,
+              });
+            }
