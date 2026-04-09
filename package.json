@@ -1,10 +1,13 @@
 {
   "private": true,
+  "bin": {
+    "website-cli": "./cli/index.js"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "setup:firecracker": "bash scripts/setup-firecracker.sh"
+    "cli": "node cli/index.js"
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^1.1.11",
