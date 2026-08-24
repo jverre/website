@@ -20,9 +20,9 @@ export default async function HomePage() {
         <section className="page-hero home-hero">
           <div className="home-hero-grid">
             <div className="home-hero-copy">
-              <p className="page-tag">Writing About AI, Product, And Builder Taste</p>
+              <p className="page-tag">A Logbook Of Explorations</p>
               <h1 className="page-title">
-                Notes from building with language models, teams, and small pieces of software.
+                Notes on agents, software, and other ideas I find interesting.
               </h1>
               <p className="page-description">
                 This is primarily a writing home now: essays, implementation notes, and sharper takes on
