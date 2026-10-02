@@ -27,11 +27,13 @@ const projects: Project[] = [
     updatedAt: '2025-09-16',
   },
   {
-    title: 'AI SDK',
-    description: 'Python port of the Vercel AI SDK with a single interface for multiple model providers.',
+    title: 'AI SDK (archived)',
+    description:
+      "Python port of the Vercel AI SDK with a single interface for multiple model providers. Archived: use Vercel's official AI SDK for Python instead.",
     repoUrl: 'https://github.com/jverre/ai-sdk',
-    tags: ['Python', 'LLMs', 'SDK', 'Open-Source'],
-    updatedAt: '2025-04-18',
+    websiteUrl: 'https://ai-python.dev',
+    tags: ['Python', 'LLMs', 'SDK', 'Archived'],
+    updatedAt: '2026-10-02',
   },
   {
     title: 'Chrome MCP Server',
