@@ -6,7 +6,7 @@ import { ArrowRight, BookOpenText, FolderKanban, Github, Linkedin } from 'lucide
 import Link from 'next/link'
 
 export const metadata: Metadata = {
-  title: 'Jacques Verré - Essays and Build Notes',
+  title: 'Jacques Verré - Logbook',
   description: 'Writing about AI products, language models, and the systems built around them.',
 }
 
@@ -20,10 +20,7 @@ export default async function HomePage() {
         <section className="page-hero home-hero">
           <div className="home-hero-grid">
             <div className="home-hero-copy">
-              <p className="page-tag">A Logbook Of Explorations</p>
-              <h1 className="page-title">
-                Notes on agents, software, and other ideas I find interesting.
-              </h1>
+              <h1 className="page-title">Personal Logbook of interesting ideas</h1>
               <p className="page-description">
                 This is primarily a writing home now: essays, implementation notes, and sharper takes on
                 what feels durable in the current AI wave.
@@ -71,23 +68,12 @@ export default async function HomePage() {
               </aside>
             )}
           </div>
-
-          <p className="hero-notes">Fig. A • Essays first, projects second, learning all the way through</p>
         </section>
 
         <div className="section-rule">
           <span>Fig. 1 - Latest Writing</span>
         </div>
         <section className="section-panel">
-          <div className="section-header">
-            <div>
-              <p className="page-caption">Fresh Notes</p>
-              <h2 className="section-title">Recent posts</h2>
-            </div>
-            <p className="section-description">
-              The newest essays, technical notes, and working-through-it posts from the lab.
-            </p>
-          </div>
           <BlogList />
         </section>
 
@@ -95,15 +81,6 @@ export default async function HomePage() {
           <span>Fig. 2 - Projects In Support Of The Writing</span>
         </div>
         <section className="section-panel">
-          <div className="section-header">
-            <div>
-              <p className="page-caption">Built To Clarify</p>
-              <h2 className="section-title">Selected projects</h2>
-            </div>
-            <p className="section-description">
-              Small products and open-source experiments that feed back into the essays and technical notes.
-            </p>
-          </div>
           <ProjectList />
           <div className="mt-8 flex justify-end">
             <Link href="/projects" className="paper-inline-link">

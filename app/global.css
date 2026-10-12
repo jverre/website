@@ -532,7 +532,7 @@ a {
 
 .section-rule span {
   white-space: nowrap;
-  color: var(--ink-ghost);
+  color: var(--ink-light);
 }
 
 .section-rule::after {
